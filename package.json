@@ -31,7 +31,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "build": "tsc -p tsconfig.build.json && chmod +x dist/cli/*.js",
     "dev": "tsc --watch",
     "test": "vitest run",
     "test:watch": "vitest",
