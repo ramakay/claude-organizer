@@ -18,7 +18,7 @@ async function addPattern(patterns: string[]) {
     let envContent = ''
     try {
       envContent = await fs.readFile(envPath, 'utf-8')
-    } catch (e) {
+    } catch (_e) {
       // File doesn't exist, that's ok
     }
     

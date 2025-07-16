@@ -122,7 +122,6 @@ async function analyzeContentWithClaude(filePath: string): Promise<{
   try {
     const content = await fs.readFile(filePath, 'utf-8')
     const fileName = path.basename(filePath)
-    const fileExtension = path.extname(filePath)
     
     // Try Claude AI analysis first
     try {
@@ -183,7 +182,7 @@ Choose the most appropriate category based on the file content. If none fit well
     // Fallback to keyword-based analysis
     return await analyzeContentKeywordBased(filePath, content)
     
-  } catch (error) {
+  } catch (_error) {
     return {
       category: 'general',
       score: 0,
@@ -267,7 +266,7 @@ async function logOrganization(logEntry: OrganizationLogEntry, config: Config): 
   try {
     const existingLogs = await fs.readFile(config.logPath, 'utf-8')
     logs = JSON.parse(existingLogs)
-  } catch (e) {
+  } catch (_e) {
     // File doesn't exist yet, start with empty array
   }
   
