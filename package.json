@@ -43,7 +43,7 @@
     "format:check": "prettier --check .",
     "clean": "rm -rf dist coverage",
     "prepublishOnly": "npm run clean && npm run build && npm run test",
-    "prepare": "npm run build"
+    "prepare": "npm run build && husky install"
   },
   "dependencies": {
     "dotenv": "^16.3.1",
@@ -60,12 +60,16 @@
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-sonarjs": "^3.0.1",
     "husky": "^8.0.0",
-    "lint-staged": "^15.0.0",
+    "lint-staged": "^15.5.2",
     "prettier": "^3.4.2",
     "typescript": "^5.2.2",
     "vitest": "^3.2.2"
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "lint-staged": {
+    "*.{js,ts,json,md,yml,yaml}": "prettier --write",
+    "*.{js,ts}": "eslint --fix"
   }
 }

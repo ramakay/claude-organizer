@@ -6,6 +6,7 @@ test/
 .claude/
 .github/
 .vscode/
+.husky/
 docs/
 scripts/
 
