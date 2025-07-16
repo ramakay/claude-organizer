@@ -1,8 +1,16 @@
+export interface Subcategory {
+  dir: string
+  keywords: string[]
+  patterns: string[]
+  description: string
+}
+
 export interface Category {
   dir: string
   keywords: string[]
   patterns: string[]
   description: string
+  subcategories?: Record<string, Subcategory>
 }
 
 export const categories: Record<string, Category> = {
@@ -153,11 +161,198 @@ export const categories: Record<string, Category> = {
       'executable',
       '#!/bin/bash',
       '#!/bin/sh',
+      '#!/usr/bin/env node',
       'function',
       'variable',
     ],
     patterns: ['script', 'automation', 'command', 'exec'],
-    description: 'Shell scripts and automation files',
+    description: 'Executable scripts and automation files',
+    subcategories: {
+      activation: {
+        dir: 'activation',
+        patterns: [
+          'activate-*',
+          'trigger-*',
+          'enable-*',
+          'start-*',
+          'launch-*',
+        ],
+        keywords: [
+          'activate',
+          'trigger',
+          'enable',
+          'start',
+          'launch',
+          'initiate',
+          'orchestrat',
+        ],
+        description: 'Scripts that activate, trigger, or enable features',
+      },
+      checks: {
+        dir: 'checks',
+        patterns: ['check-*', 'verify-*', 'validate-*', 'inspect-*', 'audit-*'],
+        keywords: [
+          'check',
+          'verify',
+          'validate',
+          'status',
+          'health',
+          'inspect',
+          'audit',
+          'monitor',
+        ],
+        description: 'Verification, validation, and status checking utilities',
+      },
+      testing: {
+        dir: 'testing',
+        patterns: ['test-*', '*-test.*', '*.test.*', 'spec-*', '*.spec.*'],
+        keywords: [
+          'test',
+          'spec',
+          'jest',
+          'mocha',
+          'vitest',
+          'e2e',
+          'integration',
+          'unit',
+        ],
+        description: 'Test scripts and test runners',
+      },
+      fixes: {
+        dir: 'fixes',
+        patterns: ['fix-*', 'repair-*', 'patch-*', 'resolve-*', 'correct-*'],
+        keywords: [
+          'fix',
+          'repair',
+          'patch',
+          'resolve',
+          'correct',
+          'mend',
+          'remedy',
+        ],
+        description: 'Scripts that fix, repair, or patch issues',
+      },
+      database: {
+        dir: 'database',
+        patterns: ['migrate-*', 'backup-*', '*-db.*', 'seed-*', 'restore-*'],
+        keywords: [
+          'database',
+          'migrate',
+          'migration',
+          'prisma',
+          'backup',
+          'sql',
+          'postgres',
+          'sqlite',
+          'seed',
+        ],
+        description: 'Database operations, migrations, and backups',
+      },
+      debug: {
+        dir: 'debug',
+        patterns: [
+          'debug-*',
+          'diagnose-*',
+          'trace-*',
+          'analyze-*',
+          'investigate-*',
+        ],
+        keywords: [
+          'debug',
+          'diagnose',
+          'trace',
+          'inspect',
+          'analyze',
+          'investigate',
+          'troubleshoot',
+        ],
+        description: 'Debug and diagnostic utilities',
+      },
+      deployment: {
+        dir: 'deployment',
+        patterns: ['deploy-*', 'release-*', 'publish-*', 'rollout-*', 'ship-*'],
+        keywords: [
+          'deploy',
+          'release',
+          'publish',
+          'production',
+          'rollout',
+          'ship',
+          'launch',
+        ],
+        description: 'Deployment and release scripts',
+      },
+      setup: {
+        dir: 'setup',
+        patterns: [
+          'setup-*',
+          'configure-*',
+          'install-*',
+          'init-*',
+          'bootstrap-*',
+        ],
+        keywords: [
+          'setup',
+          'configure',
+          'install',
+          'init',
+          'bootstrap',
+          'provision',
+        ],
+        description: 'Setup, configuration, and installation scripts',
+      },
+      workflows: {
+        dir: 'workflows',
+        patterns: [
+          '*-workflow*',
+          'workflow-*',
+          'update-*-workflow*',
+          'download-*-workflow*',
+        ],
+        keywords: [
+          'workflow',
+          'n8n',
+          'automation',
+          'orchestration',
+          'pipeline',
+        ],
+        description: 'Workflow management and automation scripts',
+      },
+      data: {
+        dir: 'data',
+        patterns: [
+          'generate-*',
+          'create-*-data',
+          'import-*',
+          'export-*',
+          'extract-*',
+        ],
+        keywords: [
+          'generate',
+          'create',
+          'import',
+          'export',
+          'extract',
+          'transform',
+          'etl',
+        ],
+        description:
+          'Data generation, import/export, and transformation scripts',
+      },
+      utilities: {
+        dir: 'utilities',
+        patterns: [
+          '*-cli.*',
+          '*-client.*',
+          '*-manager.*',
+          '*-helper.*',
+          'get-*',
+          'find-*',
+        ],
+        keywords: ['utility', 'helper', 'tool', 'cli', 'client', 'manager'],
+        description: 'General utility scripts and tools',
+      },
+    },
   },
   general: {
     dir: 'docs/general',

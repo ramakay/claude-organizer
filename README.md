@@ -228,10 +228,32 @@ Claude Organize provides several slash commands when used with Claude Code:
 - `/claude-organize-add <pattern>` - Add patterns to be organized
 - `/claude-organize-status` - Show current configuration
 - `/claude-organize-js` - Enable JavaScript/MJS organization (shows warnings)
+- `/enhance` - Generate enhanced documentation using Claude's best practices
 
-### Categories
+#### The `/enhance` Command
+
+The `/enhance` command uses [Claude's best practices for prompt documentation](https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/claude-4-best-practices) to create comprehensive, well-structured documentation for your project. This is particularly useful for:
+
+- **API Documentation** - Auto-generate detailed API docs with examples
+- **Code Documentation** - Create comprehensive code documentation
+- **Project Guides** - Generate setup, usage, and troubleshooting guides
+- **README Enhancement** - Improve existing documentation with best practices
+
+**Usage Examples:**
+
+```bash
+/enhance Create comprehensive API documentation for the user management system
+/enhance Generate a troubleshooting guide for the payment processing module
+/enhance Write setup instructions for the development environment
+```
+
+The enhanced documentation will be automatically organized into appropriate categories by Claude Organize.
+
+### Categories & Subcategories
 
 Files are organized into these directories:
+
+#### Documentation Categories
 
 - `docs/testing/` - Test results, QA reports, validation outputs
 - `docs/analysis/` - Data analysis, performance reports, investigations
@@ -242,7 +264,33 @@ Files are organized into these directories:
 - `docs/troubleshooting/` - Debug logs, issue investigations, fixes
 - `docs/cleanup/` - Temporary files marked for deletion
 - `docs/general/` - Miscellaneous documentation
-- `scripts/` - Shell scripts and automation files
+
+#### Script Categories with Intelligent Subcategories
+
+**New in v0.3.0**: Scripts are now organized with intelligent subcategories based on their purpose:
+
+- `scripts/activation/` - Scripts that activate, trigger, or enable features
+  - `activate-*`, `trigger-*`, `enable-*`, `start-*`, `launch-*`
+- `scripts/checks/` - Verification, validation, and status checking utilities
+  - `check-*`, `verify-*`, `validate-*`, `inspect-*`, `monitor-*`
+- `scripts/testing/` - Test scripts and test runners
+  - `test-*`, `*-test.*`, `*.test.*`, `spec-*`, `*.spec.*`
+- `scripts/fixes/` - Scripts that fix, repair, or patch issues
+  - `fix-*`, `repair-*`, `patch-*`, `resolve-*`, `correct-*`
+- `scripts/database/` - Database operations, migrations, and backups
+  - `migrate-*`, `backup-*`, `*-db.*`, `seed-*`, `restore-*`
+- `scripts/debug/` - Debug and diagnostic utilities
+  - `debug-*`, `diagnose-*`, `trace-*`, `analyze-*`, `investigate-*`
+- `scripts/deployment/` - Deployment and release scripts
+  - `deploy-*`, `release-*`, `publish-*`, `rollout-*`, `ship-*`
+- `scripts/setup/` - Setup, configuration, and installation scripts
+  - `setup-*`, `configure-*`, `install-*`, `init-*`, `bootstrap-*`
+- `scripts/workflows/` - Workflow and process management scripts
+  - `workflow-*`, `process-*`, `orchestrat-*`, `*-workflow.*`
+- `scripts/utilities/` - General utility and helper scripts
+  - `get-*`, `list-*`, `find-*`, `show-*`, `update-*`, `batch-*`
+
+**Smart Pattern Matching**: Claude Organize uses both filename patterns and AI content analysis to determine the most appropriate subcategory for each script.
 
 ## 🚨 Experimental: JavaScript/MJS Organization
 
@@ -370,6 +418,104 @@ By default, Claude Organize skips:
 - [ ] Batch organization command
 
 See the [open issues](https://github.com/ramakay/claude-organize/issues) for a full list of proposed features.
+
+## Feature Interactions
+
+### Skip Patterns vs JS Safety
+
+When both features are enabled:
+
+1. **Skip patterns take precedence** - If you add `*.js` to `CLAUDE_ORGANIZE_SKIP_PATTERNS`, those files will be skipped entirely
+2. **JS safety checks are bypassed** - Skip patterns prevent JS safety analysis from running
+3. **User control is respected** - Your skip patterns always win
+
+**Example**:
+
+```bash
+# This will prevent ALL .mjs files from being organized
+# even if CLAUDE_ORGANIZE_JS=true
+export CLAUDE_ORGANIZE_SKIP_PATTERNS="*.mjs,config/*"
+```
+
+**⚠️ Warning**: Adding JS files to skip patterns means they bypass all safety checks!
+
+## Known Limitations
+
+### 1. Cross-Project Hook Issues
+
+**Problem**: PostToolUse hooks may not trigger reliably in projects outside claude-organize.
+
+**Symptoms**:
+
+- Files created by Claude aren't organized
+- No organization log created
+- Hook doesn't receive project's `.env` settings
+
+**Workaround**: Use manual organization (see [JS Organization Guide](docs/js-organization-guide.md))
+
+### 2. Path Safety Check Complexity
+
+**Problem**: Absolute paths from hooks can fail depth validation.
+
+**Debug**:
+
+```bash
+CLAUDE_ORGANIZE_DEBUG=true claude-organize < input.json
+```
+
+**Workaround**:
+
+```bash
+# Bypass path check if needed (use cautiously)
+export CLAUDE_ORGANIZE_JS_BYPASS_PATH_CHECK=true
+```
+
+### 3. Environment Variable Loading
+
+**Problem**: Hooks may not load project-specific `.env` files.
+
+**Solution**: Set environment variables globally or use manual workflow.
+
+## Troubleshooting
+
+### Debug Mode
+
+Enable comprehensive logging:
+
+```bash
+export CLAUDE_ORGANIZE_DEBUG=true
+```
+
+This shows:
+
+- Path safety check decisions
+- Pattern matching results
+- AI analysis reasoning
+- Skip pattern matches
+
+### Common Issues
+
+1. **"Not a supported file type"**
+   - Update to latest version
+   - Check file extension is `.md`, `.sh`, `.js`, or `.mjs`
+
+2. **"Failed validation: Path Safety Check"**
+   - Use debug mode to see why
+   - Consider bypass flag for testing
+   - Ensure file is in a project directory
+
+3. **Files not organizing in external projects**
+   - Known limitation with PostToolUse hooks
+   - Use manual workflow (see guide)
+
+### Manual Organization
+
+When hooks fail, organize manually:
+
+```bash
+# See docs/js-organization-guide.md for complete instructions
+echo '{...}' | claude-organize
+```
 
 ## Contributing
 

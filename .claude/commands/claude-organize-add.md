@@ -12,6 +12,14 @@ Examples:
 - `/claude-organize-add *.json` - Allow JSON files to be organized
 - `/claude-organize-add *.json *.yaml` - Add multiple patterns
 
+⚠️ **WARNING for JavaScript/MJS files**:
+
+- Skip patterns take precedence over JS safety checks
+- If you remove `*.js` or `*.mjs` from skip patterns, they will ONLY be organized if:
+  1. `CLAUDE_ORGANIZE_JS=true` is set
+  2. They pass all safety validation checks
+- Adding JS files to skip patterns will bypass ALL safety analysis
+
 !`claude-organize-add $ARGUMENTS`
 
 The command will:

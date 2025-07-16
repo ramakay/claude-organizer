@@ -103,8 +103,140 @@ export const jsSafetyConfig = {
       name: 'Path Safety Check',
       check: (filePath: string) => {
         // Check if file is in a safe location (root or specific folders)
-        const depth = filePath.split('/').length
-        return depth <= 2 // Only root or one level deep
+        // Handle both absolute and relative paths
+        const normalizedPath = filePath.replace(/\\/g, '/')
+
+        // Debug logging
+        if (process.env.CLAUDE_ORGANIZE_DEBUG === 'true') {
+          console.log('[Path Safety Check] Checking:', filePath)
+          console.log('[Path Safety Check] Normalized:', normalizedPath)
+        }
+
+        // Allow bypass for testing/debugging
+        if (process.env.CLAUDE_ORGANIZE_JS_BYPASS_PATH_CHECK === 'true') {
+          if (process.env.CLAUDE_ORGANIZE_DEBUG === 'true') {
+            console.log(
+              '[Path Safety Check] BYPASSED via CLAUDE_ORGANIZE_JS_BYPASS_PATH_CHECK'
+            )
+          }
+          return true
+        }
+
+        // If it's an absolute path, get only the relative part from project root
+        const pathParts = normalizedPath.split('/')
+        let relativeParts: string[] = []
+
+        // Find where the project-specific path starts
+        // Look for common project indicators
+        let foundProjectRoot = false
+        for (let i = pathParts.length - 1; i >= 0; i--) {
+          relativeParts.unshift(pathParts[i])
+
+          // Stop when we hit common project root indicators
+          if (
+            pathParts[i].match(
+              /^(src|lib|app|web|client|server|packages|apps)$/
+            )
+          ) {
+            foundProjectRoot = true
+            if (process.env.CLAUDE_ORGANIZE_DEBUG === 'true') {
+              console.log(
+                '[Path Safety Check] Found project root:',
+                pathParts[i]
+              )
+            }
+            break
+          }
+
+          // Also stop if we've collected more than 5 parts (safety limit)
+          if (relativeParts.length > 5) {
+            break
+          }
+        }
+
+        // If we found a project root, check depth from there
+        if (foundProjectRoot) {
+          if (process.env.CLAUDE_ORGANIZE_DEBUG === 'true') {
+            console.log('[Path Safety Check] Project structure detected - PASS')
+          }
+          return true // File is within a recognized project structure
+        }
+
+        // For simple relative paths or unrecognized structures
+        // Check if this looks like a project path (contains common project folders in the full path)
+        const fullPathStr = normalizedPath.toLowerCase()
+        const isLikelyProjectPath =
+          fullPathStr.includes('/projects/') ||
+          fullPathStr.includes('/workspace/') ||
+          fullPathStr.includes('/home/') ||
+          fullPathStr.includes('/users/') ||
+          fullPathStr.includes('/documents/') ||
+          fullPathStr.includes('/desktop/')
+
+        if (process.env.CLAUDE_ORGANIZE_DEBUG === 'true') {
+          console.log(
+            '[Path Safety Check] Is likely project path:',
+            isLikelyProjectPath
+          )
+          console.log('[Path Safety Check] Relative parts:', relativeParts)
+        }
+
+        if (isLikelyProjectPath) {
+          // For project paths, we need to find the actual project-relative depth
+          // Find where the project folder is in the path
+          let projectStartIndex = -1
+          const projectMarkers = [
+            'projects',
+            'workspace',
+            'repositories',
+            'repos',
+            'code',
+            'dev',
+          ]
+
+          for (let i = 0; i < pathParts.length; i++) {
+            if (projectMarkers.includes(pathParts[i].toLowerCase())) {
+              projectStartIndex = i + 1 // Start counting after the projects folder
+              break
+            }
+          }
+
+          let actualRelativeDepth = 0
+          if (projectStartIndex > 0 && projectStartIndex < pathParts.length) {
+            // Count only the parts after the project marker
+            const relevantParts = pathParts
+              .slice(projectStartIndex)
+              .filter((p) => p && p !== '.')
+            actualRelativeDepth = relevantParts.length - 1 // Subtract 1 for the filename
+          } else {
+            // Fallback to the collected relative parts
+            actualRelativeDepth =
+              relativeParts.filter((p) => p && p !== '.').length - 1
+          }
+
+          const passed = actualRelativeDepth <= 2 // Allow files at project root or 1-2 levels deep
+          if (process.env.CLAUDE_ORGANIZE_DEBUG === 'true') {
+            console.log(
+              '[Path Safety Check] Project start index:',
+              projectStartIndex
+            )
+            console.log(
+              '[Path Safety Check] Actual relative depth:',
+              actualRelativeDepth,
+              'Pass:',
+              passed
+            )
+          }
+          return passed
+        }
+
+        // For other paths, be more restrictive
+        if (process.env.CLAUDE_ORGANIZE_DEBUG === 'true') {
+          console.log(
+            '[Path Safety Check] Not a recognized project path - FAIL'
+          )
+        }
+        return false
       },
     },
     {

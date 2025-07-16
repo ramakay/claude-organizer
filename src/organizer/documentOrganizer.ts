@@ -7,11 +7,50 @@ import { categories } from '../config/categories'
 import { ModelClientProvider } from '../providers/ModelClientProvider'
 import { jsSafetyConfig, jsAnalysisPrompt } from '../config/jsSafetyConfig'
 
+// Cache for .env configurations by directory
+const envCache = new Map<string, Record<string, string> | null>()
+
+async function loadDirectoryEnv(
+  dirPath: string
+): Promise<Record<string, string> | null> {
+  // Check cache first
+  if (envCache.has(dirPath)) {
+    return envCache.get(dirPath)!
+  }
+
+  try {
+    const envPath = path.join(dirPath, '.env')
+    const envContent = await fs.readFile(envPath, 'utf-8')
+
+    // Parse .env content manually to avoid affecting process.env
+    const envVars: Record<string, string> = {}
+    const lines = envContent.split('\n')
+
+    for (const line of lines) {
+      const trimmed = line.trim()
+      if (trimmed && !trimmed.startsWith('#')) {
+        const [key, ...valueParts] = trimmed.split('=')
+        if (key) {
+          envVars[key.trim()] = valueParts.join('=').trim()
+        }
+      }
+    }
+
+    envCache.set(dirPath, envVars)
+    return envVars
+  } catch {
+    // No .env file or can't read it
+    envCache.set(dirPath, null)
+    return null
+  }
+}
+
 interface OrganizationLogEntry {
   timestamp: string
   originalPath: string
   newPath: string
   category: string
+  subcategory?: string
   score: number
   reasoning: string
 }
@@ -83,19 +122,44 @@ export async function documentOrganizer(
       }
     }
 
-    // If it's a JS/MJS file, check if JS organization is enabled
+    // Load .env from the file's directory first
+    const sourceDir = path.dirname(filePath)
+    const localEnv = await loadDirectoryEnv(sourceDir)
+
+    // Check if organization is enabled for this directory
+    if (!localEnv) {
+      return {
+        decision: undefined,
+        reason: 'No .env file in source directory - organization not enabled',
+      }
+    }
+
+    // Create a local config based on the directory's .env
+    const localConfig = new Config(localEnv)
+
+    // Set the organization base directory to the source directory
+    localConfig.setOrganizationBaseDir(sourceDir)
+
+    // Check bypass first
+    if (localConfig.bypassEnabled) {
+      return {
+        decision: undefined,
+        reason: 'Organization bypassed by directory config',
+      }
+    }
+
+    // For JS/MJS files, check if JS organization is enabled in local config
     if (jsExtensions.includes(fileExt)) {
-      if (!config.jsOrganizationEnabled) {
+      if (!localConfig.jsOrganizationEnabled) {
         return {
           decision: undefined,
-          reason:
-            'JS/MJS organization is disabled. Set CLAUDE_ORGANIZE_JS=true to enable',
+          reason: 'JS/MJS organization disabled in directory config',
         }
       }
 
       const jsDecision = await analyzeJavaScriptFileWithExtremeCare(
         filePath,
-        config
+        localConfig
       )
       if (!jsDecision.shouldOrganize) {
         return {
@@ -107,12 +171,19 @@ export async function documentOrganizer(
 
     // Analyze the file content using Claude AI
     const analysis = await analyzeContentWithClaude(filePath)
-    const targetDir = categories[analysis.category].dir
-    const targetPath = path.join(
-      config.organizationBaseDir,
-      targetDir,
-      fileName
-    )
+
+    // Determine target directory with subcategory support
+    let targetDir = categories[analysis.category].dir
+    if (analysis.subcategory && categories[analysis.category].subcategories) {
+      const subcategories = categories[analysis.category].subcategories
+      if (subcategories && analysis.subcategory in subcategories) {
+        const subcategoryConfig = subcategories[analysis.subcategory]
+        targetDir = path.join(targetDir, subcategoryConfig.dir)
+      }
+    }
+
+    // Organize within the source directory
+    const targetPath = path.join(sourceDir, targetDir, fileName)
 
     // Create target directory if it doesn't exist
     await fs.mkdir(path.dirname(targetPath), { recursive: true })
@@ -126,13 +197,14 @@ export async function documentOrganizer(
       originalPath: filePath,
       newPath: targetPath,
       category: analysis.category,
+      subcategory: analysis.subcategory,
       score: analysis.score,
       reasoning: analysis.reasoning,
     }
 
-    await logOrganization(logEntry, config)
+    await logOrganization(logEntry, localConfig)
 
-    if (config.debugEnabled) {
+    if (localConfig.debugEnabled) {
       console.error(JSON.stringify(logEntry, null, 2))
     }
 
@@ -163,6 +235,7 @@ export async function documentOrganizer(
 
 async function analyzeContentWithClaude(filePath: string): Promise<{
   category: string
+  subcategory?: string
   score: number
   reasoning: string
 }> {
@@ -182,27 +255,42 @@ async function analyzeContentWithClaude(filePath: string): Promise<{
       const prompt = `Analyze this file and categorize it into one of these categories:
 
 Available categories:
-${availableCategories.map((cat) => `- ${cat}: ${categories[cat].description}`).join('\n')}
+${availableCategories
+  .map((cat) => {
+    let desc = `- ${cat}: ${categories[cat].description}`
+    if (cat === 'scripts' && categories[cat].subcategories) {
+      desc += '\n  Subcategories for scripts:'
+      Object.entries(categories[cat].subcategories!).forEach(
+        ([subcat, subconf]) => {
+          desc += `\n    - ${subcat}: ${subconf.description}`
+        }
+      )
+    }
+    return desc
+  })
+  .join('\n')}
 
 File: ${fileName}
 Content:
 ${content}
 
-IMPORTANT: Distinguish between:
-1. Files that ARE ABOUT testing/operations (e.g., describing test results, deployment procedures) - categorize by their primary content
-2. Files that ARE temporary/cleanup items (e.g., marked with DELETE ME, TEMP, obsolete content) - categorize as "cleanup"
+IMPORTANT: 
+1. If the file is a script (executable with shebang, .js, .mjs, .sh, .ts), categorize as "scripts" and identify the specific subcategory based on:
+   - Primary function (activation, checking, testing, fixing, etc.)
+   - Filename patterns (activate-*, check-*, test-*, fix-*, etc.)
+   - Import statements (e.g., @prisma/client → database subcategory)
+   - Main purpose of the code
 
-For example:
-- A file documenting test procedures → "testing" 
-- A file with "DELETE THIS" containing old test results → "cleanup"
-- A deployment guide → "operations"
-- A file named "temp-deploy-notes" marked obsolete → "cleanup"
+2. Distinguish between:
+   - Files that ARE ABOUT testing/operations (documentation) vs actual test/operation scripts
+   - Files that ARE temporary/cleanup items vs scripts that perform cleanup
 
 Please respond with ONLY a JSON object in this format:
 {
   "category": "category_name",
+  "subcategory": "subcategory_name", // Only if category is "scripts"
   "confidence": 0.85,
-  "reasoning": "Brief explanation of why this category was chosen"
+  "reasoning": "Brief explanation of why this category/subcategory was chosen"
 }
 
 Choose the most appropriate category based on the file content. If none fit well, use "general".`
@@ -219,6 +307,7 @@ Choose the most appropriate category based on the file content. If none fit well
         if (parsed.category && availableCategories.includes(parsed.category)) {
           return {
             category: parsed.category,
+            subcategory: parsed.subcategory,
             score: Math.round((parsed.confidence || 0.5) * 100),
             reasoning: `Claude AI: ${parsed.reasoning || 'Categorized by AI analysis'}`,
           }
@@ -346,18 +435,26 @@ async function analyzeJavaScriptFileWithExtremeCare(
       }
     }
 
-    // Step 2: Pre-flight validation passes
+    // Check for bypass flag first (for testing)
     const content = await fs.readFile(filePath, 'utf-8')
 
-    for (const validationPass of jsSafetyConfig.validationPasses) {
-      if (
-        !validationPass.check(
-          validationPass.name === 'Size Check' ? content : filePath
-        )
-      ) {
-        return {
-          shouldOrganize: false,
-          reason: `Failed validation: ${validationPass.name}`,
+    if (process.env.CLAUDE_ORGANIZE_JS_BYPASS_PATH_CHECK === 'true') {
+      if (config.debugEnabled) {
+        console.error('⚠️  Path safety check bypassed for testing')
+      }
+      // Skip validation passes in bypass mode
+    } else {
+      // Step 2: Pre-flight validation passes
+      for (const validationPass of jsSafetyConfig.validationPasses) {
+        if (
+          !validationPass.check(
+            validationPass.name === 'Size Check' ? content : filePath
+          )
+        ) {
+          return {
+            shouldOrganize: false,
+            reason: `Failed validation: ${validationPass.name}`,
+          }
         }
       }
     }

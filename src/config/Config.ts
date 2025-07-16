@@ -4,14 +4,24 @@ import * as fs from 'fs'
 export class Config {
   private readonly env: Record<string, string | undefined>
 
-  constructor() {
-    this.env = process.env
+  constructor(env?: Record<string, string | null>) {
+    // If env is provided, use it; otherwise use process.env
+    if (env) {
+      // Convert null values to undefined for consistency
+      this.env = Object.fromEntries(
+        Object.entries(env).map(([k, v]) => [k, v ?? undefined])
+      )
+    } else {
+      this.env = process.env
+    }
   }
 
   get logPath(): string {
+    // If a custom path is provided in env, use it
+    // Otherwise, use the organizationBaseDir for the log
     return (
       this.env.CLAUDE_ORGANIZE_LOG_PATH ||
-      path.join(process.cwd(), 'docs', 'organization-log.json')
+      path.join(this.organizationBaseDir, 'docs', 'organization-log.json')
     )
   }
 
@@ -19,9 +29,15 @@ export class Config {
     return this.env.CLAUDE_ORGANIZE_DEBUG === 'true'
   }
 
+  private _organizationBaseDir?: string
+
+  setOrganizationBaseDir(dir: string): void {
+    this._organizationBaseDir = dir
+  }
+
   get organizationBaseDir(): string {
-    // Default to current working directory
-    return process.cwd()
+    // Use explicitly set base directory, or fall back to CWD
+    return this._organizationBaseDir || process.cwd()
   }
 
   get bypassEnabled(): boolean {

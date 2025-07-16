@@ -24,6 +24,11 @@ export async function processHookData(
   inputData: string,
   deps: ProcessHookDataDeps
 ): Promise<OrganizationResult> {
+  // Debug logging to understand JS file processing
+  console.error('[HOOK-START] processHookData called')
+  console.error('[HOOK-START] CWD:', process.cwd())
+  console.error('[HOOK-START] Input data:', inputData)
+
   try {
     const parsedData = JSON.parse(inputData)
 
@@ -37,17 +42,34 @@ export async function processHookData(
       return defaultResult
     }
 
-    // Check if it's a supported file type (.md or .sh)
+    // Check if it's a supported file type
     const filePath = operation.tool_input.file_path
-    if (!filePath || (!filePath.endsWith('.md') && !filePath.endsWith('.sh'))) {
+    console.error('[HOOK-FILE] Processing file:', filePath)
+
+    const supportedExtensions = ['.md', '.sh', '.js', '.mjs']
+    const hasValidExtension = supportedExtensions.some((ext) =>
+      filePath?.endsWith(ext)
+    )
+
+    console.error('[HOOK-FILE] Has valid extension:', hasValidExtension)
+    console.error(
+      '[HOOK-FILE] File extension:',
+      filePath ? filePath.split('.').pop() : 'none'
+    )
+
+    if (!filePath || !hasValidExtension) {
+      console.error('[HOOK-FILE] Skipping - not supported file type')
       return {
         decision: undefined,
         reason: 'Not a supported file type',
       }
     }
 
+    console.error('[HOOK-FILE] Calling organizer for:', filePath)
     // Organize the file
-    return await deps.organizer(operation, deps.config)
+    const result = await deps.organizer(operation, deps.config)
+    console.error('[HOOK-FILE] Organizer result:', result)
+    return result
   } catch (error) {
     return {
       decision: undefined,
