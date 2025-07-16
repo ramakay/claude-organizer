@@ -100,7 +100,7 @@ export async function documentOrganizer(
 
   } catch (error) {
     // If file doesn't exist yet (timing issue), just return success
-    if ((error as any).code === 'ENOENT') {
+    if (error && typeof error === 'object' && 'code' in error && error.code === 'ENOENT') {
       return {
         decision: undefined,
         reason: 'File not found - may still be writing',
