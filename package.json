@@ -36,6 +36,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit",
     "lint": "eslint . --fix --report-unused-disable-directives --max-warnings 0",
     "lint:check": "eslint . --report-unused-disable-directives --max-warnings 0",
     "format": "prettier --write .",
