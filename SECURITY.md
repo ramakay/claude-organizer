@@ -13,7 +13,7 @@ We release patches for security vulnerabilities. Currently supported versions:
 If you discover a security vulnerability within Claude Organize, please:
 
 1. **DO NOT** open a public issue
-2. Email the maintainer at [security@claude-organize.dev](mailto:security@claude-organize.dev) with details
+2. Email the maintainer at [rama@procsolve.com) with details
 3. Include steps to reproduce if possible
 
 ### What to expect:
