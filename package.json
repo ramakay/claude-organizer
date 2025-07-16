@@ -19,7 +19,11 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
-    "claude-organize": "dist/cli/claude-organize.js"
+    "claude-organize": "dist/cli/claude-organize.js",
+    "claude-organize-bypass": "dist/cli/claude-organize-bypass.js",
+    "claude_organize_bypass": "dist/cli/claude-organize-bypass.js",
+    "claude-organize-add": "dist/cli/claude-organize-add.js",
+    "claude_organize_add": "dist/cli/claude-organize-add.js"
   },
   "files": [
     "dist",

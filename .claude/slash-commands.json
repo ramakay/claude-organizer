@@ -1,0 +1,10 @@
+{
+  "commands": [
+    {
+      "name": "claude_organize_bypass",
+      "description": "Toggle Claude Organize bypass mode for the current project",
+      "command": "claude-organize-bypass",
+      "type": "shell"
+    }
+  ]
+}

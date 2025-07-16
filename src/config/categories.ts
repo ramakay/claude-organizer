@@ -69,6 +69,16 @@ export const categories: Record<string, Category> = {
     patterns: ['debug', 'fix', 'error', 'issue'],
     description: 'Debug logs, issue investigations, fixes'
   },
+  cleanup: {
+    dir: 'docs/cleanup',
+    keywords: [
+      'cleanup', 'delete', 'remove', 'temporary', 'temp', 
+      'obsolete', 'deprecated', 'old', 'deleteme', 'fixme',
+      'todo', 'draft', 'scratch', 'throwaway', 'discard'
+    ],
+    patterns: ['temp-', 'tmp-', 'cleanup', 'delete', 'remove', 'old-'],
+    description: 'Temporary files, drafts, and content marked for cleanup or deletion'
+  },
   scripts: {
     dir: 'scripts',
     keywords: [

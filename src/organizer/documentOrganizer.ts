@@ -21,6 +21,42 @@ export async function documentOrganizer(
 ): Promise<OrganizationResult> {
   try {
     const filePath = operation.tool_input.file_path
+    const fileName = path.basename(filePath)
+    
+    // Check if bypass is enabled
+    if (config.bypassEnabled) {
+      return {
+        decision: undefined,
+        reason: 'Organization bypassed via CLAUDE_ORGANIZE_BYPASS',
+      }
+    }
+
+    // Check if file matches skip patterns
+    const shouldSkip = config.skipPatterns.some(pattern => {
+      // Handle directory patterns (e.g., .claude/*, node_modules/*)
+      if (pattern.includes('/')) {
+        // Check if the file path contains this directory pattern
+        const dirPattern = pattern.replace(/\*/g, '.*').replace(/\./g, '\\.')
+        const fullPathRegex = new RegExp(dirPattern)
+        return fullPathRegex.test(filePath)
+      }
+      
+      // Support exact matches and simple wildcards for file names
+      if (pattern.includes('*')) {
+        // Convert simple wildcard to regex
+        const regexPattern = pattern.replace(/\*/g, '.*').replace(/\./g, '\\.')
+        return new RegExp(`^${regexPattern}$`).test(fileName)
+      }
+      
+      return fileName === pattern
+    })
+
+    if (shouldSkip) {
+      return {
+        decision: undefined,
+        reason: `File ${fileName} matches skip pattern`,
+      }
+    }
     
     // Skip if already in docs directory
     if (filePath.includes('/docs/')) {
@@ -33,7 +69,6 @@ export async function documentOrganizer(
     // Analyze the file content using Claude AI
     const analysis = await analyzeContentWithClaude(filePath)
     const targetDir = categories[analysis.category].dir
-    const fileName = path.basename(filePath)
     const targetPath = path.join(config.organizationBaseDir, targetDir, fileName)
 
     // Create target directory if it doesn't exist
@@ -104,6 +139,16 @@ ${availableCategories.map(cat => `- ${cat}: ${categories[cat].description}`).joi
 File: ${fileName}
 Content:
 ${content}
+
+IMPORTANT: Distinguish between:
+1. Files that ARE ABOUT testing/operations (e.g., describing test results, deployment procedures) - categorize by their primary content
+2. Files that ARE temporary/cleanup items (e.g., marked with DELETE ME, TEMP, obsolete content) - categorize as "cleanup"
+
+For example:
+- A file documenting test procedures → "testing" 
+- A file with "DELETE THIS" containing old test results → "cleanup"
+- A deployment guide → "operations"
+- A file named "temp-deploy-notes" marked obsolete → "cleanup"
 
 Please respond with ONLY a JSON object in this format:
 {
