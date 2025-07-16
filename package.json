@@ -1,6 +1,6 @@
 {
   "name": "claude-organize",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Intelligent document organization for Claude Code using hooks",
   "author": "Rama Annaswamy",
   "license": "MIT",
