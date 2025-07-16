@@ -16,6 +16,14 @@
     ·
     <a href="https://github.com/ramakay/claude-organize/issues">Request Feature</a>
   </p>
+
+[![npm version](https://badge.fury.io/js/claude-organize.svg)](https://www.npmjs.com/package/claude-organize)
+[![npm downloads](https://img.shields.io/npm/dm/claude-organize.svg)](https://www.npmjs.com/package/claude-organize)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![CI](https://github.com/ramakay/claude-organizer/actions/workflows/ci.yml/badge.svg)](https://github.com/ramakay/claude-organizer/actions/workflows/ci.yml)
+[![Security Policy](https://img.shields.io/badge/Security-Policy-red.svg)](https://github.com/ramakay/claude-organize/blob/main/SECURITY.md)
+[![Known Vulnerabilities](https://snyk.io/test/github/ramakay/claude-organizer/badge.svg)](https://snyk.io/test/github/ramakay/claude-organizer)
+
 </div>
 
 ## About The Project
