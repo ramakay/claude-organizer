@@ -26,6 +26,100 @@
 
 </div>
 
+## The Problem
+
+When working with Claude Code on complex projects, documentation and scripts can quickly overwhelm your workspace. Without organization, finding specific documentation becomes a nightmare.
+
+### Real-World Example: Before Claude Organize 😱
+
+From an actual automation project with **1,081 files** in the root directory:
+
+- **98 markdown files** mixed with source code
+- **504 JavaScript/MJS scripts** scattered everywhere
+- Test scripts, debug logs, deployment guides all jumbled together
+
+```
+my-project/
+├── activate-workflow.mjs
+├── check-api-config.mjs
+├── FIXES-APPLIED.md              # Important but lost in 1000+ files
+├── analyze-execution-failure.mjs
+├── architecture.md               # Key docs buried in the mess
+├── check-data-flow.mjs
+├── create-test-data.js
+├── debug-execution.mjs
+├── DEPLOYMENT-CHECKLIST.md       # Critical but hard to find
+├── fix-webhook-response.mjs
+├── temp-analysis-20240715.md    # Temporary files accumulating
+├── old-debug-log.md             # Should be cleaned up
+├── validate-system.mjs
+├── ... (1,070 more files!)
+```
+
+Finding anything requires:
+
+- Endless scrolling
+- Complex grep/find commands
+- Memorizing file names
+- Wasting precious development time
+
+### After Claude Organize 🎉
+
+```
+my-project/
+├── src/                         # Source code stays untouched
+├── scripts/
+│   ├── deployment/
+│   │   ├── activate-workflow.mjs
+│   │   └── deploy-production.js
+│   ├── testing/
+│   │   ├── create-test-data.js
+│   │   └── validate-system.mjs
+│   └── debugging/
+│       ├── check-api-config.mjs
+│       └── debug-execution.mjs
+└── docs/
+    ├── architecture/
+    │   └── architecture.md      # Easy to find!
+    ├── operations/
+    │   └── DEPLOYMENT-CHECKLIST.md
+    ├── troubleshooting/
+    │   ├── FIXES-APPLIED.md
+    │   └── analyze-execution-failure.md
+    ├── development/
+    │   └── api-integration-guide.md
+    └── cleanup/                 # Temporary files clearly marked
+        ├── temp-analysis-20240715.md
+        └── old-debug-log.md
+
+```
+
+## What Claude Organize Does
+
+✅ **Automatically organizes** markdown docs and scripts as you create them
+✅ **AI-powered categorization** understands content, not just filenames
+✅ **Smart cleanup detection** - distinguishes temporary files from permanent docs
+✅ **Preserves your workflow** - works seamlessly with Claude Code hooks
+✅ **Smart defaults** - protects important files like README, LICENSE, configs
+✅ **Fully configurable** - customize categories and skip patterns
+
+### Special Features
+
+🧹 **Intelligent Cleanup Category**: Claude Organize can detect temporary files and documents that should be cleaned up later, organizing them into a `docs/cleanup/` folder. This includes:
+
+- Temporary analysis files
+- Old debug logs
+- Draft documents marked for deletion
+- One-off test results
+
+## What It Doesn't Do
+
+❌ **Won't touch source code** - only organizes .md, .sh, and .txt files
+❌ **Won't move existing files** automatically - only newly created/edited files
+❌ **Won't break your project** - extensive skip patterns for safety
+❌ **Won't slow you down** - runs asynchronously after file operations
+❌ **Won't delete files** - cleanup folder is for organization, not automatic deletion
+
 ## About The Project
 
 Claude Organize is an intelligent document organization system that automatically categorizes and organizes your markdown files and shell scripts as you work with Claude Code. It uses AI to understand the content of your files and places them in appropriate directories, keeping your project structure clean and organized.
