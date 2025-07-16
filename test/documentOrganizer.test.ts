@@ -1,11 +1,18 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
 import { documentOrganizer } from '../src/organizer/documentOrganizer'
 import { Config } from '../src/config/Config'
 import { ToolOperation } from '../src/contracts/schemas/hookSchemas'
 import * as fs from 'fs/promises'
+import { ModelClientProvider } from '../src/providers/ModelClientProvider'
 
 vi.mock('fs/promises')
-vi.mock('../src/providers/ModelClientProvider')
+vi.mock('../src/providers/ModelClientProvider', () => ({
+  ModelClientProvider: vi.fn().mockImplementation(() => ({
+    getModelClient: vi.fn().mockReturnValue({
+      ask: vi.fn().mockResolvedValue('{"category": "general", "confidence": 0.5, "reasoning": "Test"}')
+    })
+  }))
+}))
 
 describe('documentOrganizer', () => {
   let config: Config
@@ -23,6 +30,16 @@ describe('documentOrganizer', () => {
       tool_output: {},
       tool_error: null
     }
+    
+    // Default mock implementations
+    vi.mocked(fs.readFile).mockResolvedValue('# Test content')
+    vi.mocked(fs.mkdir).mockResolvedValue(undefined)
+    vi.mocked(fs.rename).mockResolvedValue(undefined)
+    vi.mocked(fs.writeFile).mockResolvedValue(undefined)
+  })
+
+  afterEach(() => {
+    vi.resetAllMocks()
   })
 
   describe('bypass mode', () => {
@@ -68,8 +85,12 @@ describe('documentOrganizer', () => {
       expect(result.reason).toBe('File already organized')
     })
 
-    it('should handle non-existent files gracefully', async () => {
-      vi.mocked(fs.readFile).mockRejectedValue({ code: 'ENOENT' })
+    it('should handle file system errors gracefully', async () => {
+      const enoentError = new Error('ENOENT: no such file or directory')
+      ;(enoentError as any).code = 'ENOENT'
+      // Mock successful read but failed rename (file was deleted between read and rename)
+      vi.mocked(fs.readFile).mockResolvedValue('# Test content')
+      vi.mocked(fs.rename).mockRejectedValue(enoentError)
       
       const result = await documentOrganizer(mockOperation, config)
       
