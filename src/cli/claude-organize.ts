@@ -11,7 +11,7 @@ export async function run(
   config?: Config
 ): Promise<OrganizationResult> {
   const appConfig = config ?? new Config()
-  
+
   return processHookData(input, {
     config: appConfig,
     organizer: documentOrganizer,

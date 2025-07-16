@@ -5,16 +5,19 @@
 ### Hook Not Triggering
 
 **Symptoms:**
+
 - Files are not being automatically organized
 - No entries in organization log
 - Manual execution works but automatic doesn't
 
 **Solutions:**
+
 1. **Verify Hook Configuration:**
+
    ```bash
    # Check if claude-organize is in PATH
    which claude-organize
-   
+
    # Verify hook is registered
    cat .claude/settings.json | grep -A 10 "hooks"
    ```
@@ -32,18 +35,22 @@
 ### Claude AI Not Working
 
 **Symptoms:**
+
 - Organization log shows "Keyword analysis" instead of "Claude AI"
 - Lower confidence scores (18-80 vs 90-95)
 - Fallback reasoning messages
 
 **Solutions:**
+
 1. **Verify Claude Installation:**
+
    ```bash
    which claude
    claude --version
    ```
 
 2. **Test Claude Access:**
+
    ```bash
    claude "Categorize this content: # Test Results"
    ```
@@ -56,11 +63,13 @@
 ### Files Not Moving
 
 **Symptoms:**
+
 - Files created but not organized
 - No error messages
 - Manual test works
 
 **Common Causes:**
+
 1. **File Already Organized:**
    - Files in `/docs/` subdirectories are skipped
    - This prevents infinite loops
@@ -70,10 +79,11 @@
    - Other file types are ignored
 
 3. **Permission Issues:**
+
    ```bash
    # Check file permissions
    ls -la filename.md
-   
+
    # Check directory permissions
    ls -la docs/
    ```
@@ -81,17 +91,21 @@
 ### Permission Errors
 
 **Symptoms:**
+
 - "EACCES: permission denied" errors
 - Files created but not moved
 - Hook execution fails
 
 **Solutions:**
+
 1. **Check File Permissions:**
+
    ```bash
    chmod 644 filename.md
    ```
 
 2. **Check Directory Permissions:**
+
    ```bash
    chmod 755 docs/
    chmod 755 docs/testing/
@@ -106,24 +120,28 @@
 ### Installation Issues
 
 **Symptoms:**
+
 - `claude-organize: command not found`
 - `npm install -g` fails
 - Permission errors during installation
 
 **Solutions:**
+
 1. **Global Installation Issues:**
+
    ```bash
    # Check npm global path
    npm config get prefix
-   
+
    # Install with sudo (if needed)
    sudo npm install -g claude-organize
-   
+
    # Or use npx
    npx claude-organize
    ```
 
 2. **Path Issues:**
+
    ```bash
    # Add to your shell profile
    export PATH="$PATH:$(npm config get prefix)/bin"
@@ -163,6 +181,7 @@ echo '{"session_id":"test","transcript_path":"/tmp/test","hook_event_name":"Post
 ### Verify Hook Data Format
 
 Expected input format:
+
 ```json
 {
   "session_id": "test-session",
@@ -181,11 +200,13 @@ Expected input format:
 ### Large Files
 
 **Symptoms:**
+
 - Long processing times
 - Timeout errors
 - Fallback to keyword analysis
 
 **Solutions:**
+
 1. **Expected Behavior:**
    - Files over certain size may timeout
    - System automatically falls back to keyword analysis
@@ -199,12 +220,15 @@ Expected input format:
 ### Memory Issues
 
 **Symptoms:**
+
 - System slow down
 - Node.js heap errors
 - Processing failures
 
 **Solutions:**
+
 1. **Increase Node.js Memory:**
+
    ```bash
    NODE_OPTIONS="--max-old-space-size=4096" claude-organize
    ```
@@ -218,11 +242,13 @@ Expected input format:
 ### Before Seeking Help
 
 1. **Check the log:**
+
    ```bash
    cat docs/organization-log.json
    ```
 
 2. **Enable debug mode:**
+
    ```bash
    CLAUDE_ORGANIZE_DEBUG=true
    ```
@@ -278,6 +304,7 @@ Include the following information:
 If files are organized incorrectly:
 
 1. **Manual Move:**
+
    ```bash
    mv docs/wrong-category/file.md docs/correct-category/
    ```
@@ -305,6 +332,7 @@ echo "[]" > docs/organization-log.json
 To temporarily disable organization:
 
 1. **Remove Hook:**
+
    ```bash
    # Edit .claude/settings.json
    # Remove or comment out the hook configuration
@@ -342,6 +370,7 @@ As stated in the [Claude Code Hooks documentation](https://docs.anthropic.com/en
 **Disclaimer:**
 
 The claude-organize tool is provided as-is without warranty. Users are responsible for:
+
 - Ensuring the tool meets their security requirements
 - Backing up important files before use
 - Understanding the risks of automated file movement

@@ -79,6 +79,7 @@ npm run test:coverage
 ## Commit Messages
 
 Follow conventional commit format:
+
 - `feat:` New features
 - `fix:` Bug fixes
 - `docs:` Documentation changes

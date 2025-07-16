@@ -9,9 +9,13 @@ vi.mock('fs/promises')
 vi.mock('../src/providers/ModelClientProvider', () => ({
   ModelClientProvider: vi.fn().mockImplementation(() => ({
     getModelClient: vi.fn().mockReturnValue({
-      ask: vi.fn().mockResolvedValue('{"category": "general", "confidence": 0.5, "reasoning": "Test"}')
-    })
-  }))
+      ask: vi
+        .fn()
+        .mockResolvedValue(
+          '{"category": "general", "confidence": 0.5, "reasoning": "Test"}'
+        ),
+    }),
+  })),
 }))
 
 describe('documentOrganizer', () => {
@@ -25,12 +29,12 @@ describe('documentOrganizer', () => {
       tool_name: 'Write',
       tool_input: {
         file_path: '/test/example.md',
-        content: '# Test Document\n\nThis is a test.'
+        content: '# Test Document\n\nThis is a test.',
       },
       tool_output: {},
-      tool_error: null
+      tool_error: null,
     }
-    
+
     // Default mock implementations
     vi.mocked(fs.readFile).mockResolvedValue('# Test content')
     vi.mocked(fs.mkdir).mockResolvedValue(undefined)
@@ -45,11 +49,13 @@ describe('documentOrganizer', () => {
   describe('bypass mode', () => {
     it('should skip organization when bypass is enabled', async () => {
       vi.spyOn(config, 'bypassEnabled', 'get').mockReturnValue(true)
-      
+
       const result = await documentOrganizer(mockOperation, config)
-      
+
       expect(result.decision).toBeUndefined()
-      expect(result.reason).toBe('Organization bypassed via CLAUDE_ORGANIZE_BYPASS')
+      expect(result.reason).toBe(
+        'Organization bypassed via CLAUDE_ORGANIZE_BYPASS'
+      )
     })
   })
 
@@ -57,9 +63,9 @@ describe('documentOrganizer', () => {
     it('should skip files matching skip patterns', async () => {
       mockOperation.tool_input.file_path = '/test/README.md'
       vi.spyOn(config, 'skipPatterns', 'get').mockReturnValue(['README.md'])
-      
+
       const result = await documentOrganizer(mockOperation, config)
-      
+
       expect(result.decision).toBeUndefined()
       expect(result.reason).toBe('File README.md matches skip pattern')
     })
@@ -67,9 +73,9 @@ describe('documentOrganizer', () => {
     it('should skip files in .claude directory', async () => {
       mockOperation.tool_input.file_path = '/test/.claude/settings.json'
       vi.spyOn(config, 'skipPatterns', 'get').mockReturnValue(['.claude/*'])
-      
+
       const result = await documentOrganizer(mockOperation, config)
-      
+
       expect(result.decision).toBeUndefined()
       expect(result.reason).toBe('File settings.json matches skip pattern')
     })
@@ -78,9 +84,9 @@ describe('documentOrganizer', () => {
   describe('file organization', () => {
     it('should skip files already in docs directory', async () => {
       mockOperation.tool_input.file_path = '/test/docs/existing.md'
-      
+
       const result = await documentOrganizer(mockOperation, config)
-      
+
       expect(result.decision).toBeUndefined()
       expect(result.reason).toBe('File already organized')
     })
@@ -91,9 +97,9 @@ describe('documentOrganizer', () => {
       // Mock successful read but failed rename (file was deleted between read and rename)
       vi.mocked(fs.readFile).mockResolvedValue('# Test content')
       vi.mocked(fs.rename).mockRejectedValue(enoentError)
-      
+
       const result = await documentOrganizer(mockOperation, config)
-      
+
       expect(result.decision).toBeUndefined()
       expect(result.reason).toBe('File not found - may still be writing')
     })

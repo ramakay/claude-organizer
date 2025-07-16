@@ -20,23 +20,26 @@ module.exports = [
         __dirname: 'readonly',
         __filename: 'readonly',
         Buffer: 'readonly',
-        global: 'readonly'
-      }
+        global: 'readonly',
+      },
     },
     plugins: {
-      '@typescript-eslint': typescript
+      '@typescript-eslint': typescript,
     },
     rules: {
       ...typescript.configs.recommended.rules,
       '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/no-unused-vars': ['error', { 
-        argsIgnorePattern: '^_',
-        varsIgnorePattern: '^_',
-        caughtErrorsIgnorePattern: '^_'
-      }],
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+        },
+      ],
       'no-console': 'off', // CLI tool needs console
-      'no-undef': 'off' // TypeScript handles this
-    }
+      'no-undef': 'off', // TypeScript handles this
+    },
   },
   {
     ignores: [
@@ -47,7 +50,7 @@ module.exports = [
       '*.config.js',
       '*.config.mjs',
       '*.config.cjs',
-      'test/**' // Ignore test files for now
-    ]
-  }
+      'test/**', // Ignore test files for now
+    ],
+  },
 ]

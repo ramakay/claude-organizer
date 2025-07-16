@@ -34,9 +34,9 @@ Claude Organize is an intelligent document organization system that automaticall
 
 ### Built With
 
-* [![TypeScript][TypeScript]][TypeScript-url]
-* [![Node.js][Node.js]][Node-url]
-* Claude AI API
+- [![TypeScript][TypeScript]][TypeScript-url]
+- [![Node.js][Node.js]][Node-url]
+- Claude AI API
 
 ## Getting Started
 
@@ -57,17 +57,20 @@ npm install -g claude-organize
 #### From source
 
 1. Clone the repo
+
    ```bash
    git clone https://github.com/ramakay/claude-organize.git
    cd claude-organize
    ```
 
 2. Install dependencies
+
    ```bash
    npm install
    ```
 
 3. Build the project
+
    ```bash
    npm run build
    ```
@@ -82,6 +85,7 @@ npm install -g claude-organize
 ### Setting up with Claude Code
 
 1. **Configure Claude Code hooks** in `.claude/settings.json`:
+
    ```json
    {
      "hooks": {
@@ -147,12 +151,13 @@ CLAUDE_ORGANIZE_LOG_PATH=/custom/path/organization-log.json
 ### Skip Patterns
 
 By default, Claude Organize skips:
+
 - Root documentation (README.md, LICENSE, CONTRIBUTING.md, etc.)
-- Version control (.git/*, .gitignore, etc.)
+- Version control (.git/\*, .gitignore, etc.)
 - Package files (package.json, package-lock.json, etc.)
-- Build directories (dist/*, build/*, node_modules/*)
-- Configuration files (.*rc, *.config.*, etc.)
-- Binary files (*.exe, *.dll, *.zip, etc.)
+- Build directories (dist/_, build/_, node_modules/\*)
+- Configuration files (._rc, _.config.\*, etc.)
+- Binary files (_.exe, _.dll, \*.zip, etc.)
 - And many more (see docs/configuration.md for full list)
 
 ## Roadmap
@@ -191,11 +196,12 @@ Project Link: [https://github.com/ramakay/claude-organize](https://github.com/ra
 
 ## Acknowledgments
 
-* Claude AI for intelligent categorization
-* Claude Code team for the hooks system
-* The open source community
+- Claude AI for intelligent categorization
+- Claude Code team for the hooks system
+- The open source community
 
 <!-- MARKDOWN LINKS & IMAGES -->
+
 [TypeScript]: https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white
 [TypeScript-url]: https://www.typescriptlang.org/
 [Node.js]: https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white

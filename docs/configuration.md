@@ -74,6 +74,7 @@ Add to `~/.claude/settings.json` for global configuration:
 Claude Organize categorizes files into these directories:
 
 ### Markdown Files → `docs/`
+
 - `docs/testing/` - Test results, QA reports, validation outputs
 - `docs/analysis/` - Data analysis, performance reports, investigations
 - `docs/architecture/` - System design, technical architecture, patterns
@@ -84,6 +85,7 @@ Claude Organize categorizes files into these directories:
 - `docs/general/` - Miscellaneous documentation
 
 ### Shell Scripts → `scripts/`
+
 - `scripts/` - All `.sh` files (build scripts, deployment scripts, etc.)
 
 ## Bypass Mechanism
@@ -97,6 +99,7 @@ export CLAUDE_ORGANIZE_BYPASS=true
 ```
 
 This is useful for:
+
 - Projects with existing organization systems
 - Temporary disable during development
 - Testing without file movement
@@ -120,6 +123,7 @@ export CLAUDE_ORGANIZE_SKIP_PATTERNS="my-file.md,my-dir/*"
 ```
 
 Supported patterns:
+
 - **Exact matches**: `README.md`, `LICENSE`
 - **Wildcard patterns**: `*.yml`, `test-*.md`
 - **Directory patterns**: `.claude/*`, `node_modules/*`
@@ -128,74 +132,89 @@ Supported patterns:
 Default skip patterns include:
 
 **Root Documentation Files:**
+
 - README*, LICENSE*, CONTRIBUTING*, CODE_OF_CONDUCT*, CHANGELOG*, SECURITY*
 - AUTHORS*, CONTRIBUTORS*, NOTICE*, PATENTS*, NEWS*, THANKS*, TODO*, ROADMAP*
 - CLAUDE.md, CLAUDE.MD
 
 **Version Control:**
-- .git/*, .svn/*, .hg/*, .bzr/*
+
+- .git/_, .svn/_, .hg/_, .bzr/_
 - .gitignore, .gitattributes, .gitmodules, .gitkeep
 
 **Package Management:**
+
 - package.json, package-lock.json, yarn.lock, pnpm-lock.yaml, shrinkwrap.json
 - composer.json, composer.lock, Gemfile, Gemfile.lock
 - Cargo.toml, Cargo.lock, go.mod, go.sum
-- requirements*.txt, Pipfile, Pipfile.lock, poetry.lock, pyproject.toml
+- requirements\*.txt, Pipfile, Pipfile.lock, poetry.lock, pyproject.toml
 - .npmrc, .yarnrc, .yarnrc.yml
 
 **Dependencies & Build Output:**
-- node_modules/*, vendor/*, bower_components/*, jspm_packages/*
-- dist/*, build/*, out/*, lib/*, bin/*, target/*
-- .next/*, .nuxt/*, .output/*, .svelte-kit/*
-- venv/*, env/*, .venv/*, virtualenv/*
+
+- node_modules/_, vendor/_, bower_components/_, jspm_packages/_
+- dist/_, build/_, out/_, lib/_, bin/_, target/_
+- .next/_, .nuxt/_, .output/_, .svelte-kit/_
+- venv/_, env/_, .venv/_, virtualenv/_
 
 **IDE & Editor:**
-- .vscode/*, .idea/*, .atom/*, .vim/*
-- *.iml, *.ipr, *.iws, *.swp, *.swo, *~
-- .project, .classpath, .settings/*
+
+- .vscode/_, .idea/_, .atom/_, .vim/_
+- _.iml, _.ipr, _.iws, _.swp, _.swo, _~
+- .project, .classpath, .settings/\*
 
 **CI/CD & Deployment:**
-- .github/*, .gitlab/*, .circleci/*, .jenkins/*
+
+- .github/_, .gitlab/_, .circleci/_, .jenkins/_
 - .travis.yml, appveyor.yml, azure-pipelines.yml, Jenkinsfile
-- .vercel/*, .netlify/*, .firebase/*, .amplify/*
+- .vercel/_, .netlify/_, .firebase/_, .amplify/_
 - Dockerfile*, docker-compose*.yml, .dockerignore
-- kubernetes/*, k8s/*, helm/*, charts/*
+- kubernetes/_, k8s/_, helm/_, charts/_
 
 **Configuration Files:**
+
 - All dotfiles (.env*, .prettierrc*, .eslintrc*, .babelrc*, etc.)
-- tsconfig*.json, jsconfig*.json, *.config.js, *.config.ts
+- tsconfig*.json, jsconfig*.json, _.config.js, _.config.ts
 - Makefile, makefile, GNUmakefile, CMakeLists.txt
 
 **Testing & Coverage:**
-- coverage/*, .coverage, htmlcov/*, .nyc_output/*
-- __tests__/*, __mocks__/*, __fixtures__/*, __snapshots__/*
-- .pytest_cache/*, __pycache__/*, *.py[cod]
+
+- coverage/_, .coverage, htmlcov/_, .nyc_output/\*
+- **tests**/_, **mocks**/_, **fixtures**/_, **snapshots**/_
+- .pytest_cache/_, **pycache**/_, \*.py[cod]
 
 **Temporary & System Files:**
-- *.log, logs/*, tmp/*, temp/*, .tmp/*, .temp/*, .cache/*
-- .DS_Store, Thumbs.db, desktop.ini, .Trash-*, .nfs*
+
+- _.log, logs/_, tmp/_, temp/_, .tmp/_, .temp/_, .cache/\*
+- .DS_Store, Thumbs.db, desktop.ini, .Trash-_, .nfs_
 
 **Security & Binary Files:**
-- *.pem, *.key, *.cert, *.crt, *.p12, *.pfx
-- *.exe, *.dll, *.so, *.dylib, *.class, *.jar
-- *.zip, *.tar, *.gz, *.7z, *.dmg, *.iso
+
+- _.pem, _.key, _.cert, _.crt, _.p12, _.pfx
+- _.exe, _.dll, _.so, _.dylib, _.class, _.jar
+- _.zip, _.tar, _.gz, _.7z, _.dmg, _.iso
 
 **Monorepo & Workspace:**
+
 - lerna.json, nx.json, turbo.json, pnpm-workspace.yaml
-- packages/*, apps/*, libs/*, .changeset/*
+- packages/_, apps/_, libs/_, .changeset/_
 
 **Database & Migrations:**
-- *.db, *.sqlite, *.sqlite3, migrations/*, seeds/*
+
+- _.db, _.sqlite, _.sqlite3, migrations/_, seeds/\*
 
 **Documentation Systems:**
-- _site/*, .docusaurus/*, .vuepress/*, .jekyll-cache/*
+
+- \_site/_, .docusaurus/_, .vuepress/_, .jekyll-cache/_
 
 **Other Important Files:**
-- CNAME, robots.txt, sitemap.xml, .well-known/*
-- All lock files (*.lock)
-- Claude-specific: .claude/*, claude.json, .claude.json
+
+- CNAME, robots.txt, sitemap.xml, .well-known/\*
+- All lock files (\*.lock)
+- Claude-specific: .claude/\*, claude.json, .claude.json
 
 The organizer automatically skips:
+
 - Files inside directories that match skip patterns (e.g., any file in .claude/)
 - Files that match wildcard patterns (e.g., all .log files)
 - Files already in the docs/ directory (to prevent loops)

@@ -13,16 +13,18 @@ export class ClaudeCli implements IModelClient {
     try {
       // Use system claude command (like TDD Guard)
       const claudeBinary = 'claude'
-      
+
       // Execute claude command with the prompt
-      const response = execFileSync(claudeBinary, [prompt], { 
+      const response = execFileSync(claudeBinary, [prompt], {
         encoding: 'utf8',
-        timeout: 30000 // 30 second timeout
+        timeout: 30000, // 30 second timeout
       })
-      
+
       return response.trim()
     } catch (error) {
-      throw new Error(`Claude CLI error: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      throw new Error(
+        `Claude CLI error: ${error instanceof Error ? error.message : 'Unknown error'}`
+      )
     }
   }
 }

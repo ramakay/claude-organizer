@@ -39,11 +39,13 @@ Standard GitHub files (README.md, LICENSE, etc.) can be created in the root.
 You can also control bypass mode through:
 
 1. **Environment variable**:
+
    ```bash
    export CLAUDE_ORGANIZE_BYPASS=true
    ```
 
 2. **Project .env file**:
+
    ```
    CLAUDE_ORGANIZE_BYPASS=true
    ```

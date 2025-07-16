@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.0] - 2025-07-16
 
 ### Added
+
 - Initial release of Claude Organize
 - AI-powered document categorization using Claude AI
 - Automatic organization of markdown files into categorized directories
@@ -24,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Comprehensive documentation
 
 ### Security
+
 - Safe file operations with proper error handling
 - Protection of system files and directories
 - No external API calls except to Claude AI (when available)

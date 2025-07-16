@@ -22,7 +22,7 @@ export async function documentOrganizer(
   try {
     const filePath = operation.tool_input.file_path
     const fileName = path.basename(filePath)
-    
+
     // Check if bypass is enabled
     if (config.bypassEnabled) {
       return {
@@ -32,7 +32,7 @@ export async function documentOrganizer(
     }
 
     // Check if file matches skip patterns
-    const shouldSkip = config.skipPatterns.some(pattern => {
+    const shouldSkip = config.skipPatterns.some((pattern) => {
       // Handle directory patterns (e.g., .claude/*, node_modules/*)
       if (pattern.includes('/')) {
         // Check if the file path contains this directory pattern
@@ -40,14 +40,14 @@ export async function documentOrganizer(
         const fullPathRegex = new RegExp(dirPattern)
         return fullPathRegex.test(filePath)
       }
-      
+
       // Support exact matches and simple wildcards for file names
       if (pattern.includes('*')) {
         // Convert simple wildcard to regex
         const regexPattern = pattern.replace(/\*/g, '.*').replace(/\./g, '\\.')
         return new RegExp(`^${regexPattern}$`).test(fileName)
       }
-      
+
       return fileName === pattern
     })
 
@@ -57,7 +57,7 @@ export async function documentOrganizer(
         reason: `File ${fileName} matches skip pattern`,
       }
     }
-    
+
     // Skip if already in docs directory
     if (filePath.includes('/docs/')) {
       return {
@@ -69,7 +69,11 @@ export async function documentOrganizer(
     // Analyze the file content using Claude AI
     const analysis = await analyzeContentWithClaude(filePath)
     const targetDir = categories[analysis.category].dir
-    const targetPath = path.join(config.organizationBaseDir, targetDir, fileName)
+    const targetPath = path.join(
+      config.organizationBaseDir,
+      targetDir,
+      fileName
+    )
 
     // Create target directory if it doesn't exist
     await fs.mkdir(path.dirname(targetPath), { recursive: true })
@@ -97,10 +101,14 @@ export async function documentOrganizer(
       decision: undefined,
       reason: `Organized to ${targetDir}`,
     }
-
   } catch (error) {
     // If file doesn't exist yet (timing issue), just return success
-    if (error && typeof error === 'object' && 'code' in error && error.code === 'ENOENT') {
+    if (
+      error &&
+      typeof error === 'object' &&
+      'code' in error &&
+      error.code === 'ENOENT'
+    ) {
       return {
         decision: undefined,
         reason: 'File not found - may still be writing',
@@ -122,18 +130,20 @@ async function analyzeContentWithClaude(filePath: string): Promise<{
   try {
     const content = await fs.readFile(filePath, 'utf-8')
     const fileName = path.basename(filePath)
-    
+
     // Try Claude AI analysis first
     try {
       const modelProvider = new ModelClientProvider()
       const modelClient = modelProvider.getModelClient()
-      
-      const availableCategories = Object.keys(categories).filter(cat => cat !== 'general')
-      
+
+      const availableCategories = Object.keys(categories).filter(
+        (cat) => cat !== 'general'
+      )
+
       const prompt = `Analyze this file and categorize it into one of these categories:
 
 Available categories:
-${availableCategories.map(cat => `- ${cat}: ${categories[cat].description}`).join('\n')}
+${availableCategories.map((cat) => `- ${cat}: ${categories[cat].description}`).join('\n')}
 
 File: ${fileName}
 Content:
@@ -159,117 +169,136 @@ Please respond with ONLY a JSON object in this format:
 Choose the most appropriate category based on the file content. If none fit well, use "general".`
 
       const response = await modelClient.ask(prompt)
-      
+
       // Try to parse Claude's response
       const cleanResponse = response.trim()
       const jsonMatch = cleanResponse.match(/\{[^}]+\}/)
-      
+
       if (jsonMatch) {
         const parsed = JSON.parse(jsonMatch[0])
-        
+
         if (parsed.category && availableCategories.includes(parsed.category)) {
           return {
             category: parsed.category,
             score: Math.round((parsed.confidence || 0.5) * 100),
-            reasoning: `Claude AI: ${parsed.reasoning || 'Categorized by AI analysis'}`
+            reasoning: `Claude AI: ${parsed.reasoning || 'Categorized by AI analysis'}`,
           }
         }
       }
     } catch (claudeError) {
-      console.error('Claude analysis failed, falling back to keyword analysis:', claudeError)
+      console.error(
+        'Claude analysis failed, falling back to keyword analysis:',
+        claudeError
+      )
     }
-    
+
     // Fallback to keyword-based analysis
     return await analyzeContentKeywordBased(filePath, content)
-    
   } catch (_error) {
     return {
       category: 'general',
       score: 0,
-      reasoning: 'Error analyzing file, defaulting to general category'
+      reasoning: 'Error analyzing file, defaulting to general category',
     }
   }
 }
 
-async function analyzeContentKeywordBased(filePath: string, content: string): Promise<{
+async function analyzeContentKeywordBased(
+  filePath: string,
+  content: string
+): Promise<{
   category: string
   score: number
   reasoning: string
 }> {
   const lowerContent = content.toLowerCase()
   const fileName = path.basename(filePath).toLowerCase()
-  
+
   // Score each category based on content analysis
   const scores: Record<string, number> = {}
-  
+
   for (const [category, config] of Object.entries(categories)) {
     if (category === 'general') continue // Skip general, it's the fallback
-    
+
     let score = 0
-    
+
     // Check keywords in content
     for (const keyword of config.keywords) {
       const escapedKeyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-      const occurrences = (lowerContent.match(new RegExp(escapedKeyword, 'gi')) || []).length
+      const occurrences = (
+        lowerContent.match(new RegExp(escapedKeyword, 'gi')) || []
+      ).length
       score += occurrences * 2 // Weight content matches heavily
     }
-    
+
     // Check patterns in filename
     for (const pattern of config.patterns) {
       if (fileName.includes(pattern)) {
         score += 10 // Filename patterns are strong indicators
       }
     }
-    
+
     // Check for specific content structures
-    if (category === 'testing' && (content.includes('PASS') || content.includes('FAIL'))) {
+    if (
+      category === 'testing' &&
+      (content.includes('PASS') || content.includes('FAIL'))
+    ) {
       score += 15
     }
-    if (category === 'architecture' && (content.includes('```mermaid') || content.includes('diagram'))) {
+    if (
+      category === 'architecture' &&
+      (content.includes('```mermaid') || content.includes('diagram'))
+    ) {
       score += 15
     }
-    if (category === 'troubleshooting' && (content.includes('Error:') || content.includes('Stack trace'))) {
+    if (
+      category === 'troubleshooting' &&
+      (content.includes('Error:') || content.includes('Stack trace'))
+    ) {
       score += 15
     }
-    
+
     scores[category] = score
   }
-  
+
   // Find the category with the highest score
   let bestCategory = 'general'
   let highestScore = 0
-  
+
   for (const [category, score] of Object.entries(scores)) {
     if (score > highestScore) {
       highestScore = score
       bestCategory = category
     }
   }
-  
+
   // If no strong match, use general
   if (highestScore < 5) {
     bestCategory = 'general'
   }
-  
+
   return {
     category: bestCategory,
     score: highestScore,
-    reasoning: `Keyword analysis: Score ${highestScore}. Matched based on content analysis and filename patterns.`
+    reasoning: `Keyword analysis: Score ${highestScore}. Matched based on content analysis and filename patterns.`,
   }
 }
 
-async function logOrganization(logEntry: OrganizationLogEntry, config: Config): Promise<void> {
+async function logOrganization(
+  logEntry: OrganizationLogEntry,
+  config: Config
+): Promise<void> {
   config.ensureLogDirectory()
-  
+
   let logs: OrganizationLogEntry[] = []
-  
+
   try {
     const existingLogs = await fs.readFile(config.logPath, 'utf-8')
     logs = JSON.parse(existingLogs)
   } catch (_e) {
     // File doesn't exist yet, start with empty array
   }
-  
+
   logs.push(logEntry)
   await fs.writeFile(config.logPath, JSON.stringify(logs, null, 2))
 }

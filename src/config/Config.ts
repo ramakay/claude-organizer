@@ -3,7 +3,7 @@ import * as fs from 'fs'
 
 export class Config {
   private readonly env: Record<string, string | undefined>
-  
+
   constructor() {
     this.env = process.env
   }
@@ -48,7 +48,7 @@ export class Config {
       'PATENT*',
       'TRADEMARK*',
       'CITATION*',
-      
+
       // Version Control & Git
       '.git/*',
       '.gitignore',
@@ -57,7 +57,7 @@ export class Config {
       '.gitmessage',
       '.gitconfig',
       '.gitkeep',
-      
+
       // Package Management - JavaScript/Node.js
       'package.json',
       'package-lock.json',
@@ -71,7 +71,7 @@ export class Config {
       'lerna.json',
       'rush.json',
       'pnpm-workspace.yaml',
-      
+
       // Package Management - Other Languages
       'composer.json',
       'composer.lock',
@@ -92,7 +92,7 @@ export class Config {
       'pubspec.yaml',
       'pubspec.lock',
       '*.toml',
-      
+
       // Build & Distribution Directories
       'dist/*',
       'build/*',
@@ -111,7 +111,7 @@ export class Config {
       '.vuepress/dist/*',
       'docs/.vitepress/dist/*',
       'site/*',
-      
+
       // IDE & Editor
       '.vscode/*',
       '.idea/*',
@@ -129,7 +129,7 @@ export class Config {
       '.vim/*',
       '.emacs*',
       '.spacemacs*',
-      
+
       // Testing & Coverage
       'coverage/*',
       '.nyc_output/*',
@@ -146,7 +146,7 @@ export class Config {
       '.coverage',
       'coverage.xml',
       '*.lcov',
-      
+
       // CI/CD & Deployment
       '.github/*',
       '.gitlab/*',
@@ -166,7 +166,7 @@ export class Config {
       '.codeship*',
       'wercker.yml',
       '.teamcity/*',
-      
+
       // Cloud & Infrastructure
       '.vercel/*',
       'vercel.json',
@@ -188,7 +188,7 @@ export class Config {
       'fly.toml',
       'railway.json',
       'railway.toml',
-      
+
       // Container & Orchestration
       'Dockerfile',
       'Dockerfile*',
@@ -203,7 +203,7 @@ export class Config {
       'containers/*',
       'skaffold.yaml',
       'tilt*',
-      
+
       // Monorepo & Workspace
       'nx.json',
       'workspace.json',
@@ -215,7 +215,7 @@ export class Config {
       'tools/*',
       '.changeset/*',
       '.yarn/*',
-      
+
       // Configuration Files
       '.editorconfig',
       '.prettierrc*',
@@ -235,7 +235,7 @@ export class Config {
       'jsconfig*.json',
       'tslint.json',
       '.swcrc',
-      
+
       // Build Tools Configuration
       'webpack.config.*',
       'rollup.config.*',
@@ -253,7 +253,7 @@ export class Config {
       'postcss.config.*',
       'tailwind.config.*',
       'windi.config.*',
-      
+
       // Testing Configuration
       'jest.config.*',
       'jest.setup.*',
@@ -266,7 +266,7 @@ export class Config {
       'ava.config.*',
       'nightwatch.conf.*',
       '.testcaferc*',
-      
+
       // Environment & Secrets
       '.env',
       '.env.*',
@@ -282,7 +282,7 @@ export class Config {
       '.htaccess',
       '.htpasswd',
       'private/*',
-      
+
       // Database & Storage
       '*.db',
       '*.sqlite',
@@ -295,7 +295,7 @@ export class Config {
       'database/*',
       '*.mdb',
       '*.accdb',
-      
+
       // Cache & Temporary
       '.cache/*',
       'tmp/*',
@@ -313,7 +313,7 @@ export class Config {
       '.npm/*',
       '.yarn-cache/*',
       '.pnpm-store/*',
-      
+
       // Dependencies & Virtual Environments
       'node_modules/*',
       'vendor/*',
@@ -329,7 +329,7 @@ export class Config {
       '.virtualenvs/*',
       'pip-wheel-metadata/*',
       '__pypackages__/*',
-      
+
       // System & OS Files
       '.DS_Store',
       'Thumbs.db',
@@ -351,7 +351,7 @@ export class Config {
       '*.msm',
       '*.msp',
       '*.lnk',
-      
+
       // Logs & Reports
       '*.log',
       'logs/*',
@@ -368,7 +368,7 @@ export class Config {
       '*.pid',
       '*.seed',
       '*.pid.lock',
-      
+
       // Binary & Archives
       '*.exe',
       '*.dll',
@@ -401,7 +401,7 @@ export class Config {
       '*.gem',
       '*.egg',
       '*.whl',
-      
+
       // Language Specific - Python
       '*.py[cod]',
       '__pycache__/*',
@@ -431,7 +431,7 @@ export class Config {
       '.python-version',
       'Pipfile.lock',
       '__pypackages__/*',
-      
+
       // Language Specific - Java/Kotlin/Scala
       '.gradle/*',
       'gradle/*',
@@ -455,20 +455,20 @@ export class Config {
       '.mtj.tmp/*',
       'hs_err_pid*',
       'replay_pid*',
-      
+
       // Language Specific - Go
       '*.exe',
       '*.exe~',
       '*.test',
       '*.out',
       'go.work',
-      
+
       // Language Specific - Rust
       'debug/*',
       '**/*.rs.bk',
       '*.pdb',
       'Cargo.lock',
-      
+
       // Language Specific - Ruby
       '*.gem',
       '*.rbc',
@@ -489,7 +489,7 @@ export class Config {
       '.rvmrc',
       '/vendor/bundle/*',
       '/.bundle/*',
-      
+
       // Language Specific - PHP
       '/vendor/*',
       'composer.phar',
@@ -498,7 +498,7 @@ export class Config {
       '.php-cs-fixer.cache',
       '.php_cs.cache',
       '.phpstan/*',
-      
+
       // Framework Specific
       '.meteor/*',
       '.serverless/*',
@@ -517,7 +517,7 @@ export class Config {
       '.sst/*',
       'sst.json',
       'sst.config.ts',
-      
+
       // Misc Tools & Services
       '.husky/*',
       '.commitlintrc*',
@@ -537,13 +537,13 @@ export class Config {
       '.expo/*',
       '.expo-shared/*',
       'expo-env.d.ts',
-      
+
       // Security Tools
       '.security/*',
       'security/*',
       '.audit/*',
       'audit/*',
-      
+
       // Documentation Tools
       'typedoc.json',
       '.typedoc*',
@@ -551,7 +551,7 @@ export class Config {
       '.jsdoc*',
       'docsify/*',
       '.docsify/*',
-      
+
       // Claude & AI Specific
       '.claude/*',
       'CLAUDE.md',
@@ -559,14 +559,14 @@ export class Config {
       '.ai/*',
       '.openai/*',
       '.anthropic/*',
-      
+
       // Lock files (catch-all)
       '*.lock',
       '*-lock.*',
-      
+
       // Hidden directories (common convention)
       '.*/*',
-      
+
       // Temporary files (catch-all)
       '*.tmp',
       '*.temp',
@@ -575,7 +575,7 @@ export class Config {
       '*.old',
       '*.orig',
       '*.rej',
-      
+
       // OS generated files
       '.AppleDouble',
       '.LSOverride',
@@ -587,22 +587,25 @@ export class Config {
       '.VolumeIcon.icns',
       '.com.apple.timemachine.donotpresent',
       '.apdisk',
-      
+
       // Windows specific
       '[Tt]humbs.db',
       '[Tt]humbs.db:encryptable',
       '[Dd]esktop.ini',
-      
+
       // Linux specific
       '*~',
       '.fuse_hidden*',
       '.directory',
       '.Trash-*',
-      '.nfs*'
+      '.nfs*',
     ].join(',')
-    
+
     const patterns = this.env.CLAUDE_ORGANIZE_SKIP_PATTERNS || defaultPatterns
-    return patterns.split(',').map(p => p.trim()).filter(p => p.length > 0)
+    return patterns
+      .split(',')
+      .map((p) => p.trim())
+      .filter((p) => p.length > 0)
   }
 
   ensureLogDirectory(): void {

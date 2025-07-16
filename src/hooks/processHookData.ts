@@ -1,15 +1,18 @@
 import { OrganizationResult } from '../contracts/types/OrganizationResult'
-import { 
-  HookDataSchema, 
+import {
+  HookDataSchema,
   HookData,
   ToolOperationSchema,
-  ToolOperation 
+  ToolOperation,
 } from '../contracts/schemas/hookSchemas'
 import { Config } from '../config/Config'
 
 export interface ProcessHookDataDeps {
   config: Config
-  organizer: (operation: ToolOperation, config: Config) => Promise<OrganizationResult>
+  organizer: (
+    operation: ToolOperation,
+    config: Config
+  ) => Promise<OrganizationResult>
 }
 
 export const defaultResult: OrganizationResult = {
@@ -23,7 +26,7 @@ export async function processHookData(
 ): Promise<OrganizationResult> {
   try {
     const parsedData = JSON.parse(inputData)
-    
+
     const hookResult = HookDataSchema.safeParse(parsedData)
     if (!hookResult.success) {
       return defaultResult
@@ -45,7 +48,6 @@ export async function processHookData(
 
     // Organize the file
     return await deps.organizer(operation, deps.config)
-    
   } catch (error) {
     return {
       decision: undefined,
