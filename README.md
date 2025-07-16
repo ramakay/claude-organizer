@@ -120,6 +120,17 @@ my-project/
 ❌ **Won't slow you down** - runs asynchronously after file operations
 ❌ **Won't delete files** - cleanup folder is for organization, not automatic deletion
 
+## ⚠️ Important Disclaimer
+
+**USE AT YOUR OWN RISK**: Claude Organize moves files in your project. While it has extensive safety measures and skip patterns, you should:
+
+- ✅ **Always use version control** (Git) before enabling
+- ✅ **Test in a safe environment** first
+- ✅ **Review the organization log** at `docs/organization-log.json`
+- ✅ **Keep backups** of important projects
+
+**This tool is provided "as is" without warranty of any kind.** The authors are not responsible for any data loss or project disruption. By using this tool, you accept full responsibility for its effects on your files.
+
 ## About The Project
 
 Claude Organize is an intelligent document organization system that automatically categorizes and organizes your markdown files and shell scripts as you work with Claude Code. It uses AI to understand the content of your files and places them in appropriate directories, keeping your project structure clean and organized.
@@ -216,6 +227,7 @@ Claude Organize provides several slash commands when used with Claude Code:
 - `/bypass` - Quick toggle (shorter alias)
 - `/claude-organize-add <pattern>` - Add patterns to be organized
 - `/claude-organize-status` - Show current configuration
+- `/claude-organize-js` - Enable JavaScript/MJS organization (shows warnings)
 
 ### Categories
 
@@ -231,6 +243,89 @@ Files are organized into these directories:
 - `docs/cleanup/` - Temporary files marked for deletion
 - `docs/general/` - Miscellaneous documentation
 - `scripts/` - Shell scripts and automation files
+
+## 🚨 Experimental: JavaScript/MJS Organization
+
+**⚠️ DISABLED BY DEFAULT - EXPERIMENTAL FEATURE**
+
+Claude Organize can organize JavaScript utility scripts, but this feature is **OFF by default** due to the risk of breaking your project.
+
+### What It Does
+
+When enabled with `CLAUDE_ORGANIZE_JS=true`, it can organize utility scripts like:
+
+- `check-api-config.mjs` → `scripts/`
+- `debug-workflow.js` → `scripts/`
+- `test-data-generator.mjs` → `scripts/`
+
+### What It NEVER Touches
+
+- ❌ Any file in `src/`, `lib/`, `dist/`, `build/`
+- ❌ Files with `export` or `module.exports`
+- ❌ React/Vue/Angular components
+- ❌ Config files (`*.config.js`)
+- ❌ Package entry points (`index.js`, `main.js`)
+
+### How to Enable (Use with Extreme Caution!)
+
+```bash
+# Enable JS organization
+export CLAUDE_ORGANIZE_JS=true
+
+# Choose mode:
+# safe = only files matching utility patterns (recommended)
+export CLAUDE_ORGANIZE_JS_MODE=safe
+
+# aggressive = AI analysis with 95% confidence (riskier)
+export CLAUDE_ORGANIZE_JS_MODE=aggressive
+```
+
+Or use the slash command: `/claude-organize-js`
+
+### Safety Measures
+
+1. **Multi-layer validation** before moving any JS file
+2. **Pattern matching** for known utility scripts
+3. **AI analysis** (in aggressive mode) with extreme caution
+4. **Size limits** - only small utility scripts
+5. **Export detection** - skips any module files
+
+**⚠️ WARNING**: Even with these safety measures, enabling JS organization could potentially move files that break your project. Always use version control and test thoroughly!
+
+## 📊 Monitoring & Logs
+
+Claude Organize maintains a detailed log of all file movements:
+
+**Log Location**: `docs/organization-log.json`
+
+The log contains:
+
+- Timestamp of each operation
+- Original file path
+- New file path
+- Category assigned
+- AI confidence score
+- Reasoning for the categorization
+
+Example log entry:
+
+```json
+{
+  "timestamp": "2024-07-15T10:30:45.123Z",
+  "originalPath": "./debug-api-config.md",
+  "newPath": "./docs/troubleshooting/debug-api-config.md",
+  "category": "troubleshooting",
+  "score": 85,
+  "reasoning": "Claude AI: File contains debugging information and error analysis"
+}
+```
+
+**Check logs regularly** to:
+
+- Verify files are being organized correctly
+- Understand AI decision-making
+- Track all file movements
+- Troubleshoot any issues
 
 ### Configuration
 

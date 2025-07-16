@@ -21,6 +21,15 @@ CLAUDE_ORGANIZE_BYPASS=true
 # Comma-separated list of file/directory patterns to skip
 # See "Skip Patterns" section below for defaults and syntax
 CLAUDE_ORGANIZE_SKIP_PATTERNS=README.md,LICENSE,*.yml,.claude/*
+
+# Enable JavaScript/MJS file organization (default: false)
+# This is OFF by default for safety - only utility scripts are organized
+CLAUDE_ORGANIZE_JS=true
+
+# JavaScript organization mode (default: safe)
+# safe = only files matching utility patterns (check-*, test-*, debug-*, etc.)
+# aggressive = use AI analysis with 95%+ confidence requirement
+CLAUDE_ORGANIZE_JS_MODE=safe
 ```
 
 ## Hook Configuration
@@ -87,6 +96,28 @@ Claude Organize categorizes files into these directories:
 ### Shell Scripts → `scripts/`
 
 - `scripts/` - All `.sh` files (build scripts, deployment scripts, etc.)
+
+### JavaScript/MJS Utility Scripts → `scripts/`
+
+**⚠️ Experimental Feature - OFF by default**
+
+When `CLAUDE_ORGANIZE_JS=true` is set, Claude Organize can organize JavaScript utility scripts:
+
+- `scripts/` - Utility scripts like `check-*.js`, `test-*.js`, `debug-*.js`, etc.
+- **NEVER organizes**: Core application code, modules with exports, framework files
+- **Ultra-careful analysis**: Multiple safety checks before moving any JS file
+
+Safe utility patterns (organized in `safe` mode):
+
+- `check-*.{js,mjs}` - Configuration checkers
+- `test-*.{js,mjs}` - Test data generators
+- `debug-*.{js,mjs}` - Debugging utilities
+- `analyze-*.{js,mjs}` - Analysis scripts
+- `validate-*.{js,mjs}` - Validation tools
+- `cleanup-*.{js,mjs}` - Cleanup utilities
+- `fix-*.{js,mjs}` - Fix scripts
+- `migrate-*.{js,mjs}` - Migration scripts
+- `seed-*.{js,mjs}` - Database seeders
 
 ## Bypass Mechanism
 

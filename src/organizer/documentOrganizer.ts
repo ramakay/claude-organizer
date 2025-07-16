@@ -5,6 +5,7 @@ import { ToolOperation } from '../contracts/schemas/hookSchemas'
 import { Config } from '../config/Config'
 import { categories } from '../config/categories'
 import { ModelClientProvider } from '../providers/ModelClientProvider'
+import { jsSafetyConfig, jsAnalysisPrompt } from '../config/jsSafetyConfig'
 
 interface OrganizationLogEntry {
   timestamp: string
@@ -63,6 +64,44 @@ export async function documentOrganizer(
       return {
         decision: undefined,
         reason: 'File already organized',
+      }
+    }
+
+    // Check file extension
+    const fileExt = path.extname(fileName).toLowerCase()
+    const supportedExtensions = ['.md', '.txt', '.sh']
+    const jsExtensions = ['.js', '.mjs']
+
+    // If not a supported extension, skip
+    if (
+      !supportedExtensions.includes(fileExt) &&
+      !jsExtensions.includes(fileExt)
+    ) {
+      return {
+        decision: undefined,
+        reason: `File extension ${fileExt} not supported for organization`,
+      }
+    }
+
+    // If it's a JS/MJS file, check if JS organization is enabled
+    if (jsExtensions.includes(fileExt)) {
+      if (!config.jsOrganizationEnabled) {
+        return {
+          decision: undefined,
+          reason:
+            'JS/MJS organization is disabled. Set CLAUDE_ORGANIZE_JS=true to enable',
+        }
+      }
+
+      const jsDecision = await analyzeJavaScriptFileWithExtremeCare(
+        filePath,
+        config
+      )
+      if (!jsDecision.shouldOrganize) {
+        return {
+          decision: undefined,
+          reason: jsDecision.reason,
+        }
       }
     }
 
@@ -281,6 +320,193 @@ async function analyzeContentKeywordBased(
     category: bestCategory,
     score: highestScore,
     reasoning: `Keyword analysis: Score ${highestScore}. Matched based on content analysis and filename patterns.`,
+  }
+}
+
+async function analyzeJavaScriptFileWithExtremeCare(
+  filePath: string,
+  config: Config
+): Promise<{ shouldOrganize: boolean; reason: string }> {
+  try {
+    const fileName = path.basename(filePath)
+
+    // Step 1: Check absolute skip patterns for JS files
+    for (const pattern of jsSafetyConfig.absoluteSkipPatterns) {
+      const regexPattern = pattern
+        .replace(/\*\*/g, '.*')
+        .replace(/\*/g, '[^/]*')
+        .replace(/\./g, '\\.')
+        .replace(/\{([^}]+)\}/g, '($1)')
+
+      if (new RegExp(regexPattern).test(filePath)) {
+        return {
+          shouldOrganize: false,
+          reason: `JS file matches absolute skip pattern: ${pattern}`,
+        }
+      }
+    }
+
+    // Step 2: Pre-flight validation passes
+    const content = await fs.readFile(filePath, 'utf-8')
+
+    for (const validationPass of jsSafetyConfig.validationPasses) {
+      if (
+        !validationPass.check(
+          validationPass.name === 'Size Check' ? content : filePath
+        )
+      ) {
+        return {
+          shouldOrganize: false,
+          reason: `Failed validation: ${validationPass.name}`,
+        }
+      }
+    }
+
+    // Step 3: Check for danger indicators
+    let dangerCount = 0
+    const foundDangers: string[] = []
+
+    for (const pattern of jsSafetyConfig.dangerIndicators.patterns) {
+      if (pattern.test(content)) {
+        dangerCount++
+        foundDangers.push(pattern.source)
+      }
+    }
+
+    if (dangerCount > jsSafetyConfig.dangerIndicators.maxAllowed) {
+      return {
+        shouldOrganize: false,
+        reason: `Found ${dangerCount} danger indicators: ${foundDangers.slice(0, 3).join(', ')}...`,
+      }
+    }
+
+    // Step 4: Check for utility indicators
+    let utilityCount = 0
+    const foundUtilities: string[] = []
+
+    for (const pattern of jsSafetyConfig.utilityIndicators.patterns) {
+      if (pattern.test(content)) {
+        utilityCount++
+        foundUtilities.push(pattern.source)
+      }
+    }
+
+    // Step 5: Check if filename matches safe utility patterns
+    let matchesSafePattern = false
+    for (const pattern of jsSafetyConfig.safeUtilityPatterns) {
+      const regexPattern = pattern
+        .replace(/\*/g, '.*')
+        .replace(/\./g, '\\.')
+        .replace(/\{([^}]+)\}/g, '($1)')
+
+      if (new RegExp(`^${regexPattern}$`).test(fileName)) {
+        matchesSafePattern = true
+        break
+      }
+    }
+
+    // If no utility indicators and doesn't match safe patterns, skip
+    if (
+      utilityCount < jsSafetyConfig.utilityIndicators.required &&
+      !matchesSafePattern
+    ) {
+      return {
+        shouldOrganize: false,
+        reason:
+          "No utility indicators found and filename doesn't match safe patterns",
+      }
+    }
+
+    // In safe mode, only organize if it matches safe patterns
+    if (config.jsOrganizationMode === 'safe') {
+      if (matchesSafePattern && utilityCount >= 1) {
+        return {
+          shouldOrganize: true,
+          reason: `Safe mode: Matches utility pattern and has ${utilityCount} utility indicators`,
+        }
+      }
+      return {
+        shouldOrganize: false,
+        reason: "Safe mode: File doesn't match safe utility patterns",
+      }
+    }
+
+    // Step 6: AI Analysis with extreme caution
+    if (config.debugEnabled) {
+      console.error(`🔍 Performing ultra-careful AI analysis on ${fileName}...`)
+    }
+
+    const modelProvider = new ModelClientProvider()
+    const modelClient = modelProvider.getModelClient()
+
+    if (!modelClient) {
+      // If no AI available, only organize if it strongly matches safe patterns
+      if (matchesSafePattern && utilityCount >= 2) {
+        return {
+          shouldOrganize: true,
+          reason: 'Matches safe utility patterns with multiple indicators',
+        }
+      }
+      return {
+        shouldOrganize: false,
+        reason:
+          'Cannot perform AI analysis and insufficient utility indicators',
+      }
+    }
+
+    // Prepare content for analysis (limit to 8KB for efficiency)
+    const contentForAnalysis = content.substring(0, 8192)
+    const analysisPrompt = jsAnalysisPrompt
+      .replace('{{{content}}}', contentForAnalysis)
+      .replace('{{{filePath}}}', filePath)
+
+    const response = await modelClient.ask(analysisPrompt)
+
+    // Parse AI response
+    try {
+      const cleanResponse = response
+        .replace(/```json\n?/g, '')
+        .replace(/```\n?/g, '')
+        .trim()
+      const analysis = JSON.parse(cleanResponse)
+
+      if (
+        analysis.decision === 'organize' &&
+        analysis.confidence >= jsSafetyConfig.MIN_CONFIDENCE_THRESHOLD
+      ) {
+        if (config.debugEnabled) {
+          console.error(
+            `✅ AI approved organization with ${analysis.confidence}% confidence`
+          )
+          console.error(`Reasoning: ${analysis.reasoning}`)
+        }
+        return {
+          shouldOrganize: true,
+          reason: `AI analysis: ${analysis.confidence}% confident. ${analysis.file_purpose}`,
+        }
+      } else {
+        if (config.debugEnabled) {
+          console.error(`❌ AI rejected organization: ${analysis.reasoning}`)
+          console.error(`Risk factors: ${analysis.risk_factors?.join(', ')}`)
+        }
+        return {
+          shouldOrganize: false,
+          reason: `AI analysis: ${analysis.reasoning} (confidence: ${analysis.confidence}%)`,
+        }
+      }
+    } catch (_parseError) {
+      // If AI response can't be parsed, err on the side of caution
+      return {
+        shouldOrganize: false,
+        reason: 'AI analysis response invalid - skipping for safety',
+      }
+    }
+  } catch (error) {
+    // Any error means we skip the file for safety
+    return {
+      shouldOrganize: false,
+      reason: `Error during analysis: ${error instanceof Error ? error.message : 'Unknown error'}`,
+    }
   }
 }
 

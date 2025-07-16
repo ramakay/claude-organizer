@@ -28,6 +28,19 @@ export class Config {
     return this.env.CLAUDE_ORGANIZE_BYPASS === 'true'
   }
 
+  get jsOrganizationEnabled(): boolean {
+    // JS/MJS organization is opt-in due to higher risk
+    return this.env.CLAUDE_ORGANIZE_JS === 'true'
+  }
+
+  get jsOrganizationMode(): 'safe' | 'aggressive' {
+    // 'safe' mode only organizes files matching safe patterns
+    // 'aggressive' mode uses full AI analysis
+    return this.env.CLAUDE_ORGANIZE_JS_MODE === 'aggressive'
+      ? 'aggressive'
+      : 'safe'
+  }
+
   get skipPatterns(): string[] {
     // Comprehensive default patterns for files and directories that should never be moved
     const defaultPatterns = [

@@ -23,7 +23,9 @@
     "claude-organize-bypass": "dist/cli/claude-organize-bypass.js",
     "claude_organize_bypass": "dist/cli/claude-organize-bypass.js",
     "claude-organize-add": "dist/cli/claude-organize-add.js",
-    "claude_organize_add": "dist/cli/claude-organize-add.js"
+    "claude_organize_add": "dist/cli/claude-organize-add.js",
+    "claude-organize-js": "dist/cli/claude-organize-js.js",
+    "claude_organize_js": "dist/cli/claude-organize-js.js"
   },
   "files": [
     "dist",

@@ -5,6 +5,12 @@
       "description": "Toggle Claude Organize bypass mode for the current project",
       "command": "claude-organize-bypass",
       "type": "shell"
+    },
+    {
+      "name": "claude_organize_js",
+      "description": "Enable JavaScript/MJS organization (experimental feature with warnings)",
+      "command": "claude-organize-js",
+      "type": "shell"
     }
   ]
 }
