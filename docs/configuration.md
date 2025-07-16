@@ -1,88 +1,56 @@
 # Configuration Guide
 
+Customize Claude Organize to fit your project's needs.
+
 ## Environment Variables
 
 Create a `.env` file in your project root:
 
 ```bash
-# Custom log location (default: ./docs/organization-log.json)
+# Basic Configuration
+CLAUDE_ORGANIZE_BYPASS=false
+CLAUDE_ORGANIZE_DEBUG=false
+
+# Custom skip patterns (comma-separated)
+CLAUDE_ORGANIZE_SKIP_PATTERNS=*.json,*.yml,my-custom-file.md
+
+# Custom log path
 CLAUDE_ORGANIZE_LOG_PATH=/custom/path/organization-log.json
 
-# Enable debug logging
-CLAUDE_ORGANIZE_DEBUG=true
-
-# Custom base directory for organization (default: current directory)
-CLAUDE_ORGANIZE_BASE_DIR=/custom/base/path
-
-# Bypass organization completely
-CLAUDE_ORGANIZE_BYPASS=true
-
-# Skip patterns for files and directories that should never be moved
-# Comma-separated list of file/directory patterns to skip
-# See "Skip Patterns" section below for defaults and syntax
-CLAUDE_ORGANIZE_SKIP_PATTERNS=README.md,LICENSE,*.yml,.claude/*
-
-# Enable JavaScript/MJS file organization (default: false)
-# This is OFF by default for safety - only utility scripts are organized
-CLAUDE_ORGANIZE_JS=true
-
-# JavaScript organization mode (default: safe)
-# safe = only files matching utility patterns (check-*, test-*, debug-*, etc.)
-# aggressive = use AI analysis with 95%+ confidence requirement
+# JavaScript Organization (Experimental)
+CLAUDE_ORGANIZE_JS=false
 CLAUDE_ORGANIZE_JS_MODE=safe
+CLAUDE_ORGANIZE_JS_BYPASS_PATH_CHECK=false
 ```
 
-## Hook Configuration
+## Skip Patterns
 
-### Project-Specific Settings
+Control which files are never organized:
 
-Create `.claude/settings.json` in your project:
+### Default Skip Patterns
 
-```json
-{
-  "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Write|Edit|MultiEdit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "claude-organize"
-          }
-        ]
-      }
-    ]
-  }
-}
+```
+README.md, LICENSE, CONTRIBUTING.md
+package.json, package-lock.json, yarn.lock
+.git/*, .gitignore, .gitmodules
+dist/*, build/*, node_modules/*
+*.config.js, *.config.ts, *.config.json
+*.exe, *.dll, *.zip, *.tar.gz
 ```
 
-### Global Settings
+### Adding Custom Skip Patterns
 
-Add to `~/.claude/settings.json` for global configuration:
+```bash
+# Via environment variable
+export CLAUDE_ORGANIZE_SKIP_PATTERNS="*.json,config/*,temp-*"
 
-```json
-{
-  "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Write|Edit|MultiEdit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "claude-organize"
-          }
-        ]
-      }
-    ]
-  }
-}
+# Via slash command
+/claude-organize-add *.json config/*
 ```
 
-## Categories
+## Organizational Categories
 
-Claude Organize categorizes files into these directories:
-
-### Markdown Files → `docs/`
+### Documentation Categories
 
 - `docs/testing/` - Test results, QA reports, validation outputs
 - `docs/analysis/` - Data analysis, performance reports, investigations
@@ -91,171 +59,58 @@ Claude Organize categorizes files into these directories:
 - `docs/development/` - Implementation details, code documentation
 - `docs/planning/` - Project plans, roadmaps, specifications
 - `docs/troubleshooting/` - Debug logs, issue investigations, fixes
+- `docs/cleanup/` - Temporary files marked for deletion
 - `docs/general/` - Miscellaneous documentation
 
-### Shell Scripts → `scripts/`
+### Script Subcategories
 
-- `scripts/` - All `.sh` files (build scripts, deployment scripts, etc.)
+See [Subcategories Guide](subcategories.md) for detailed patterns.
 
-### JavaScript/MJS Utility Scripts → `scripts/`
+## JavaScript Organization
 
-**⚠️ Experimental Feature - OFF by default**
+**⚠️ EXPERIMENTAL FEATURE - DISABLED BY DEFAULT**
 
-When `CLAUDE_ORGANIZE_JS=true` is set, Claude Organize can organize JavaScript utility scripts:
-
-- `scripts/` - Utility scripts like `check-*.js`, `test-*.js`, `debug-*.js`, etc.
-- **NEVER organizes**: Core application code, modules with exports, framework files
-- **Ultra-careful analysis**: Multiple safety checks before moving any JS file
-
-Safe utility patterns (organized in `safe` mode):
-
-- `check-*.{js,mjs}` - Configuration checkers
-- `test-*.{js,mjs}` - Test data generators
-- `debug-*.{js,mjs}` - Debugging utilities
-- `analyze-*.{js,mjs}` - Analysis scripts
-- `validate-*.{js,mjs}` - Validation tools
-- `cleanup-*.{js,mjs}` - Cleanup utilities
-- `fix-*.{js,mjs}` - Fix scripts
-- `migrate-*.{js,mjs}` - Migration scripts
-- `seed-*.{js,mjs}` - Database seeders
-
-## Bypass Mechanism
-
-### Complete Bypass
-
-To disable organization entirely for a project:
+### Safety Levels
 
 ```bash
-export CLAUDE_ORGANIZE_BYPASS=true
+# Safe mode (recommended)
+CLAUDE_ORGANIZE_JS_MODE=safe
+
+# Aggressive mode (more risky)
+CLAUDE_ORGANIZE_JS_MODE=aggressive
 ```
 
-This is useful for:
+### Safety Checks
 
-- Projects with existing organization systems
-- Temporary disable during development
-- Testing without file movement
+1. **Path Safety Check** - Validates file location
+2. **Size Check** - Skips files over 10KB
+3. **Import/Export Check** - Skips module files
+4. **Pattern Matching** - Only moves known utility patterns
 
-### Skip Patterns
-
-To skip specific files and directories while keeping organization active:
+### Bypass Options (Testing Only)
 
 ```bash
-# Skip specific files
-export CLAUDE_ORGANIZE_SKIP_PATTERNS="README.md,LICENSE,CONTRIBUTING.md"
-
-# Skip all files in .claude directory
-export CLAUDE_ORGANIZE_SKIP_PATTERNS=".claude/*"
-
-# Skip multiple patterns
-export CLAUDE_ORGANIZE_SKIP_PATTERNS="*.yml,*.yaml,.git/*,node_modules/*"
-
-# Override all defaults with custom patterns
-export CLAUDE_ORGANIZE_SKIP_PATTERNS="my-file.md,my-dir/*"
+# WARNING: Use with extreme caution
+CLAUDE_ORGANIZE_JS_BYPASS_PATH_CHECK=true
 ```
 
-Supported patterns:
+## Logging & Monitoring
 
-- **Exact matches**: `README.md`, `LICENSE`
-- **Wildcard patterns**: `*.yml`, `test-*.md`
-- **Directory patterns**: `.claude/*`, `node_modules/*`
-- **Multiple patterns**: Comma-separated list
+### Organization Log
 
-Default skip patterns include:
+Location: `docs/organization-log.json`
 
-**Root Documentation Files:**
+Example entry:
 
-- README*, LICENSE*, CONTRIBUTING*, CODE_OF_CONDUCT*, CHANGELOG*, SECURITY*
-- AUTHORS*, CONTRIBUTORS*, NOTICE*, PATENTS*, NEWS*, THANKS*, TODO*, ROADMAP*
-- CLAUDE.md, CLAUDE.MD
-
-**Version Control:**
-
-- .git/_, .svn/_, .hg/_, .bzr/_
-- .gitignore, .gitattributes, .gitmodules, .gitkeep
-
-**Package Management:**
-
-- package.json, package-lock.json, yarn.lock, pnpm-lock.yaml, shrinkwrap.json
-- composer.json, composer.lock, Gemfile, Gemfile.lock
-- Cargo.toml, Cargo.lock, go.mod, go.sum
-- requirements\*.txt, Pipfile, Pipfile.lock, poetry.lock, pyproject.toml
-- .npmrc, .yarnrc, .yarnrc.yml
-
-**Dependencies & Build Output:**
-
-- node*modules/*, vendor/_, bower_components/_, jspm*packages/*
-- dist/_, build/_, out/_, lib/_, bin/_, target/_
-- .next/_, .nuxt/_, .output/_, .svelte-kit/_
-- venv/_, env/_, .venv/_, virtualenv/_
-
-**IDE & Editor:**
-
-- .vscode/_, .idea/_, .atom/_, .vim/_
-- _.iml, _.ipr, _.iws, _.swp, _.swo, _~
-- .project, .classpath, .settings/\*
-
-**CI/CD & Deployment:**
-
-- .github/_, .gitlab/_, .circleci/_, .jenkins/_
-- .travis.yml, appveyor.yml, azure-pipelines.yml, Jenkinsfile
-- .vercel/_, .netlify/_, .firebase/_, .amplify/_
-- Dockerfile*, docker-compose*.yml, .dockerignore
-- kubernetes/_, k8s/_, helm/_, charts/_
-
-**Configuration Files:**
-
-- All dotfiles (.env*, .prettierrc*, .eslintrc*, .babelrc*, etc.)
-- tsconfig*.json, jsconfig*.json, _.config.js, _.config.ts
-- Makefile, makefile, GNUmakefile, CMakeLists.txt
-
-**Testing & Coverage:**
-
-- coverage/_, .coverage, htmlcov/_, .nyc_output/\*
-- **tests**/_, **mocks**/_, **fixtures**/_, **snapshots**/_
-- .pytest*cache/*, **pycache**/\_, \*.py[cod]
-
-**Temporary & System Files:**
-
-- _.log, logs/_, tmp/_, temp/_, .tmp/_, .temp/_, .cache/\*
-- .DS*Store, Thumbs.db, desktop.ini, .Trash-*, .nfs\_
-
-**Security & Binary Files:**
-
-- _.pem, _.key, _.cert, _.crt, _.p12, _.pfx
-- _.exe, _.dll, _.so, _.dylib, _.class, _.jar
-- _.zip, _.tar, _.gz, _.7z, _.dmg, _.iso
-
-**Monorepo & Workspace:**
-
-- lerna.json, nx.json, turbo.json, pnpm-workspace.yaml
-- packages/_, apps/_, libs/_, .changeset/_
-
-**Database & Migrations:**
-
-- _.db, _.sqlite, _.sqlite3, migrations/_, seeds/\*
-
-**Documentation Systems:**
-
-- \_site/_, .docusaurus/_, .vuepress/_, .jekyll-cache/_
-
-**Other Important Files:**
-
-- CNAME, robots.txt, sitemap.xml, .well-known/\*
-- All lock files (\*.lock)
-- Claude-specific: .claude/\*, claude.json, .claude.json
-
-The organizer automatically skips:
-
-- Files inside directories that match skip patterns (e.g., any file in .claude/)
-- Files that match wildcard patterns (e.g., all .log files)
-- Files already in the docs/ directory (to prevent loops)
-
-## Customization
-
-### Custom Log Path
-
-```bash
-export CLAUDE_ORGANIZE_LOG_PATH="/my/custom/log/path.json"
+```json
+{
+  "timestamp": "2024-07-15T10:30:45.123Z",
+  "originalPath": "./debug-api-config.md",
+  "newPath": "./docs/troubleshooting/debug-api-config.md",
+  "category": "troubleshooting",
+  "score": 85,
+  "reasoning": "File contains debugging information and error analysis"
+}
 ```
 
 ### Debug Mode
@@ -264,54 +119,73 @@ export CLAUDE_ORGANIZE_LOG_PATH="/my/custom/log/path.json"
 export CLAUDE_ORGANIZE_DEBUG=true
 ```
 
-### Custom Base Directory
+Shows:
+
+- Path safety check decisions
+- Pattern matching results
+- AI analysis reasoning
+- Skip pattern matches
+
+## Cross-Project Setup
+
+For projects outside the claude-organize directory:
+
+1. **Global .env setup**:
+
+   ```bash
+   # Set globally
+   export CLAUDE_ORGANIZE_JS=true
+   export CLAUDE_ORGANIZE_JS_MODE=safe
+   ```
+
+2. **Project-specific .env**:
+   ```bash
+   # In your project root
+   echo "CLAUDE_ORGANIZE_JS=true" > .env
+   echo "CLAUDE_ORGANIZE_JS_MODE=safe" >> .env
+   ```
+
+## Troubleshooting Configuration
+
+### Common Issues
+
+1. **Files not organizing**:
+   - Check if file matches skip patterns
+   - Verify `.env` file is in project root
+   - Enable debug mode to see decisions
+
+2. **JS files not organizing**:
+   - Ensure `CLAUDE_ORGANIZE_JS=true`
+   - Check if file passes safety validation
+   - Review debug output for failure reasons
+
+3. **Wrong category assignment**:
+   - Check AI reasoning in organization log
+   - Consider renaming file to match patterns
+   - Report issues for AI model improvements
+
+### Debug Commands
 
 ```bash
-export CLAUDE_ORGANIZE_BASE_DIR="/my/project/root"
+# Test organization manually
+echo '{"tool_name": "Write", "tool_input": {"file_path": "/test/debug.md", "content": "# Debug guide"}}' | claude-organize
+
+# Check configuration
+claude-organize-status
 ```
 
 ## Advanced Configuration
 
-### Excluding Files
+### Custom Categories
 
-Files already in organized directories are automatically skipped to prevent loops.
+Currently not supported - feature planned for future releases.
+
+### API Integration
+
+For programmatic access, see [API Documentation](api.md).
 
 ### Performance Tuning
 
-- Claude AI timeout: 30 seconds (not configurable)
-- Fallback to keyword analysis is automatic
-- File processing is sequential for safety
-
-## Troubleshooting Configuration
-
-### Verify Hook Setup
-
-```bash
-# Check if claude-organize is in PATH
-which claude-organize
-
-# Test manual execution
-echo '{"session_id":"test","transcript_path":"/tmp/test","hook_event_name":"PostToolUse","tool_name":"Write","tool_input":{"file_path":"./test.md","content":"# Test"}}' | claude-organize
-```
-
-### Debug Mode
-
-Enable debug logging to see detailed processing:
-
-```bash
-CLAUDE_ORGANIZE_DEBUG=true claude-organize
-```
-
-### Check Organization Log
-
-```bash
-cat docs/organization-log.json
-```
-
-## Best Practices
-
-1. **Use project-specific settings** for team consistency
-2. **Enable debug mode** during initial setup
-3. **Monitor organization logs** for accuracy
-4. **Test with sample files** before full deployment
-5. **Keep logs in version control** for transparency
+- Use pattern matching over AI analysis when possible
+- Batch organize multiple files
+- Clear organization log periodically
