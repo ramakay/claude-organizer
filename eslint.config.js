@@ -29,7 +29,11 @@ module.exports = [
     rules: {
       ...typescript.configs.recommended.rules,
       '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': ['error', { 
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        caughtErrorsIgnorePattern: '^_'
+      }],
       'no-console': 'off', // CLI tool needs console
       'no-undef': 'off' // TypeScript handles this
     }
