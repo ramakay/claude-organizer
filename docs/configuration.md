@@ -152,7 +152,7 @@ Default skip patterns include:
 
 **Dependencies & Build Output:**
 
-- node_modules/_, vendor/_, bower_components/_, jspm_packages/_
+- node*modules/*, vendor/_, bower_components/_, jspm*packages/*
 - dist/_, build/_, out/_, lib/_, bin/_, target/_
 - .next/_, .nuxt/_, .output/_, .svelte-kit/_
 - venv/_, env/_, .venv/_, virtualenv/_
@@ -181,12 +181,12 @@ Default skip patterns include:
 
 - coverage/_, .coverage, htmlcov/_, .nyc_output/\*
 - **tests**/_, **mocks**/_, **fixtures**/_, **snapshots**/_
-- .pytest_cache/_, **pycache**/_, \*.py[cod]
+- .pytest*cache/*, **pycache**/\_, \*.py[cod]
 
 **Temporary & System Files:**
 
 - _.log, logs/_, tmp/_, temp/_, .tmp/_, .temp/_, .cache/\*
-- .DS_Store, Thumbs.db, desktop.ini, .Trash-_, .nfs_
+- .DS*Store, Thumbs.db, desktop.ini, .Trash-*, .nfs\_
 
 **Security & Binary Files:**
 
