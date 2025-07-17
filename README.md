@@ -1,4 +1,4 @@
-# Claude Organize
+# Claude Organizer - The Housekeeper for Claude Code by Claude Code.
 
 <div align="center">
 
