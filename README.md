@@ -105,23 +105,47 @@ Files are automatically organized when you create or edit them with Claude Code:
 
 ## The `/enhance` Command
 
-Generate comprehensive, well-structured documentation using [Claude's best practices](https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/claude-4-best-practices). This powerful command helps you create:
+Transform vague requests into comprehensive, well-structured prompts using [Claude's best practices](https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/claude-4-best-practices). This powerful slash command works directly in Claude Code - no setup required.
 
-- **API Documentation** - Complete with examples and error handling
-- **Architecture Guides** - System design and technical decisions
-- **Troubleshooting Docs** - Step-by-step debugging guides
-- **Setup Instructions** - Clear, beginner-friendly tutorials
+### What it does
 
-### Usage Examples
+Takes your brief request and transforms it into a detailed specification with:
+
+- Clear objectives and requirements
+- Explicit success criteria
+- Structured format with context
+- Edge cases and constraints
+
+### How it works
+
+The `/enhance` command transforms minimal input into comprehensive prompts:
 
 ```bash
-/enhance Create comprehensive API documentation for the auth module
-/enhance Write a troubleshooting guide for database connection issues
-/enhance Generate setup instructions for new developers
-/enhance Document the payment processing workflow with examples
+# Transform vague requests into detailed specifications
+/enhance Fix the broken authentication → Detailed auth debugging plan
+/enhance Create API docs → Comprehensive documentation structure
+/enhance Make it faster → Performance optimization requirements
 ```
 
-All enhanced documentation is automatically organized into the appropriate category, making it easy to maintain a well-structured documentation system.
+### Real transformations
+
+**Input**: `/enhance fix the broken thing`  
+**Output**: Detailed debugging plan with:
+
+- Problem identification steps
+- Root cause analysis approach
+- Testing methodology
+- Success criteria
+
+**Input**: `/enhance write tests`  
+**Output**: Comprehensive test plan including:
+
+- Test coverage requirements
+- Edge cases to consider
+- Framework recommendations
+- Quality metrics
+
+All enhanced prompts follow Claude 4 best practices for clarity, structure, and actionable output. Works in both normal and plan modes.
 
 ## Other Slash Commands
 
