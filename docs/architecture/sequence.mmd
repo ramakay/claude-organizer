@@ -1,0 +1,16 @@
+%%{init: {'theme':'dark', 'sequence': { 'actorFontSize': '22px', 'messageFontSize': '20px' }}}%%
+sequenceDiagram
+    %% Simplified Flow - 5 Key Steps
+    
+    participant U as 👤 User
+    participant CC as 📝 Claude Code
+    participant CO as 📦 claude-organize  
+    participant AI as 🤖 AI
+    participant FS as 📁 Files
+    
+    U->>CC: Create file.md
+    CC->>CO: Hook triggers
+    CO->>AI: Analyze content
+    AI->>CO: Category: "testing"
+    CO->>FS: Move to docs/testing/
+    FS->>U: ✅ File organized!

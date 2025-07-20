@@ -1,0 +1,27 @@
+%%{init: {'theme':'dark', 'themeVariables': { 'fontSize': '20px' }}}%%
+flowchart TB
+    %% Hooks vs Slash Commands
+    
+    subgraph HOOKS["🪝 HOOKS (claude-organize)"]
+        H1["Automatic triggers"]
+        H2["File operations"]
+        H3["Background process"]
+        H4["No user interaction"]
+        H1 --> H2 --> H3 --> H4
+    end
+    
+    subgraph COMMANDS["/ SLASH COMMANDS (/enhance)"]
+        C1["User initiated"]
+        C2["Text transformation"]
+        C3["Interactive process"]  
+        C4["Returns to user"]
+        C1 --> C2 --> C3 --> C4
+    end
+    
+    User["👤 User Action"]
+    User -->|"Creates file"| HOOKS
+    User -->|"Types /command"| COMMANDS
+    
+    style HOOKS fill:#4A90E2,stroke:#4A90E2,stroke-width:3px,color:#FFF
+    style COMMANDS fill:#FFD700,stroke:#FFD700,stroke-width:3px,color:#000
+    style User fill:#000,stroke:#FFD700,stroke-width:3px,color:#FFD700

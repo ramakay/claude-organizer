@@ -1,0 +1,21 @@
+%%{init: {'theme':'dark', 'themeVariables': { 'fontSize': '24px' }}}%%
+flowchart LR
+    %% Simplified Claude Organize Architecture
+    
+    User["👤 User"] 
+    CC["📝 Claude Code<br/>+ Hook"]
+    CO["📦 claude-organize"]
+    AI["🤖 AI Categorizer"]
+    FS["📁 Organized Files"]
+    
+    User -->|"Creates file"| CC
+    CC -->|"Triggers"| CO
+    CO -->|"Analyzes with"| AI
+    AI -->|"Categorizes"| CO
+    CO -->|"Moves file to"| FS
+    
+    style User fill:#FFD700,stroke:#FFD700,stroke-width:3px,color:#000
+    style CC fill:#4A90E2,stroke:#4A90E2,stroke-width:3px,color:#FFF
+    style CO fill:#FFD700,stroke:#FFD700,stroke-width:3px,color:#000
+    style AI fill:#4A90E2,stroke:#4A90E2,stroke-width:3px,color:#FFF
+    style FS fill:#FFD700,stroke:#FFD700,stroke-width:3px,color:#000
