@@ -354,4 +354,4 @@ graph LR
 
 ---
 
-<small>This architecture documentation is automatically generated and kept in sync with the codebase. Last updated: {{ 'now' | date: "%Y-%m-%d" }}</small>
+<small>This architecture documentation is automatically generated and kept in sync with the codebase. Last updated: {{ 'now' | date: '%Y-%m-%d' }}</small>

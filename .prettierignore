@@ -10,3 +10,5 @@ build/
 out/
 .cache/
 public/
+docs/_layouts/
+docs/assets/
