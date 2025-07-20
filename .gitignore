@@ -52,3 +52,10 @@ pnpm-lock.yaml
 
 # Organization logs (user data)
 /docs/organization-log.json
+
+# Draft content and personal notes
+docs/testing/reddit-post.md
+docs/linkedin-content.md
+**/draft-*.md
+**/personal-*.md
+**/private-*.md
