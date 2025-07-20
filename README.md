@@ -187,6 +187,29 @@ Files are automatically organized into these directories:
 - `scripts/utilities/` - General utility scripts
 - [+ 5 more subcategories](docs/subcategories.md)
 
+## Architecture
+
+### How It Works
+
+![Architecture Overview](docs/architecture/architecture.png)
+
+**Simple Flow**: User → Claude Code → claude-organize → AI → Organized Files
+
+### File Organization Process
+
+![Sequence Diagram](docs/architecture/sequence.png)
+
+**6 Steps**: Create file → Hook triggers → AI analyzes → Returns category → File moves → Success!
+
+### Slash Commands vs Hooks
+
+![Hooks vs Commands](docs/architecture/hooks-vs-commands.png)
+
+- **Hooks**: Automatic file organization (claude-organize)
+- **Slash Commands**: Interactive text enhancement (/enhance)
+
+[View all architecture diagrams →](docs/architecture/)
+
 ## Safety & Disclaimers
 
 **⚠️ USE AT YOUR OWN RISK**: Claude Organize moves files in your project. Always use version control and test in a safe environment first.
