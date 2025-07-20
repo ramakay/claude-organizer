@@ -17,7 +17,12 @@ If $ARGUMENTS is empty or just whitespace:
 
 1. Check the conversation history for the user's last substantive message
 2. Use that message as the request to enhance
-3. If no previous message exists, ask the user to provide a request to enhance
+3. If no previous message exists, ask the user to provide a request to enhance with examples:
+   - `/enhance fix the authentication bug` - Get a detailed debugging plan
+   - `/enhance create API documentation` - Generate comprehensive docs structure
+   - `/enhance optimize database queries` - Receive performance improvement strategy
+   - `/enhance implement user notifications` - Get full feature implementation plan
+   - `/enhance write unit tests for payment module` - Create thorough testing approach
 
 ### Step 1: Context Analysis and Rule Selection
 
