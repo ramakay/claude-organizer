@@ -9,6 +9,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![CI](https://github.com/ramakay/claude-organizer/actions/workflows/ci.yml/badge.svg)](https://github.com/ramakay/claude-organizer/actions/workflows/ci.yml)
 
+**NPM Package**: [https://www.npmjs.com/package/claude-organize](https://www.npmjs.com/package/claude-organize)
+
 </div>
 
 ## Two Problems, One Solution
@@ -123,6 +125,21 @@ npm install -g claude-organize
 ```
 
 ### Setup File Organization
+
+You have two options to configure the file organization hook:
+
+#### Option 1: Using Claude's /hooks command (Recommended)
+
+Simply ask Claude to add the hook for you:
+
+```bash
+# In Claude Code, just type:
+"Add the claude-organize hook using /hooks"
+
+# Claude will use the /hooks command to configure it automatically
+```
+
+#### Option 2: Manual Configuration
 
 Add to your `.claude/settings.json`:
 
