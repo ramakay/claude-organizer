@@ -60,16 +60,20 @@ my-project/
     └── debug/                   # Debug utilities together
 ```
 
-### 🧠 Context-Aware Prompt Enhancement
+### 🧠 Two-Pass Prompt Enhancement
 
 ```bash
 # Your vague request
 /enhance fix the broken tests
 
-# Enhanced with relevant CLAUDE.md rules
+# Pass 1: Expands using Claude's prompt best practices
+✓ Transforms 3 words into comprehensive specification
+✓ Adds context, success criteria, and structure
+
+# Pass 2: Integrates relevant CLAUDE.md rules
 ✓ Includes: "NEVER claim success if tests are failing"
 ✓ Includes: "ALWAYS verify functionality before declaring completion"
-✓ Structured debugging plan with success criteria
+✓ Only adds rules relevant to the task at hand
 ```
 
 ## Quick Start
@@ -118,6 +122,8 @@ The `/enhance` command is automatically installed to `~/.claude/commands/` and r
 
 ### Prompt Enhancement (/enhance)
 
+✅ **Two-pass enhancement** - First expands using Claude's best practices, then adds CLAUDE.md rules  
+✅ **Prompt engineering** - Transforms vague requests into comprehensive specifications  
 ✅ **Context engineering** - Selects only relevant project rules  
 ✅ **CLAUDE.md integration** - Automatically includes applicable guidelines  
 ✅ **Smart detection** - Understands task type from your request  
