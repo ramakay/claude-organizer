@@ -1,8 +1,8 @@
-# Claude Organizer - The Housekeeper for Claude Code by Claude Code.
+# Claude Organize
 
 <div align="center">
 
-<h3>Intelligent document organization for Claude Code using AI-powered categorization</h3>
+<h3>Intelligent document organization & prompt enhancement for Claude Code</h3>
 
 [![npm version](https://badge.fury.io/js/claude-organize.svg)](https://www.npmjs.com/package/claude-organize)
 [![npm downloads](https://img.shields.io/npm/dm/claude-organize.svg)](https://www.npmjs.com/package/claude-organize)
@@ -11,16 +11,13 @@
 
 </div>
 
-## The Problem
+## Two Problems, One Solution
 
-Claude Code has a file organization problem. Despite CLAUDE.md instructions saying "don't create scripts in the root directory," it keeps creating test files, debug scripts, and documentation right at your project root. Like an eager assistant who doesn't clean up after themselves, Claude Code:
+Claude Organize solves two critical problems when working with Claude Code:
 
-- **Creates duplicate files** with identical names (GitHub Issue #1342)
-- **Ignores CLAUDE.md instructions** about file organization (Issue #2901)
-- **Accumulates irrelevant files** in its context, degrading performance
-- **Requires constant monitoring** to correct its behavior
+### Problem 1: The Messy File Problem 🗂️
 
-### Before Claude Organize 😱
+Claude Code creates files everywhere. Despite CLAUDE.md instructions saying "don't create scripts in the root directory," it keeps creating test files, debug scripts, and documentation right at your project root:
 
 ```
 my-project/
@@ -29,24 +26,50 @@ my-project/
 ├── test-api-final.md            # "Final" version
 ├── test-api-final-FIXED.md      # Actually final?
 ├── debug-webhook.mjs            # Quick test script
-├── check-data-flow.js           # Another test
 ├── analyze-performance.mjs      # Debugging session
-├── TEMP-NOTES.md                # "Temporary" for 3 months
-├── src/                         # Your actual code
 └── ... (87 more files at root!)
 ```
 
-### After Claude Organize 🎉
+**Solution**: Automatic file organization using AI-powered categorization
+
+### Problem 2: The Context Adherence Problem 🧠
+
+Claude Code struggles to maintain project context throughout conversations. You have a detailed CLAUDE.md with project rules, but Claude often:
+
+- **Forgets project guidelines** mid-conversation
+- **Ignores file organization rules** when creating new files
+- **Loses track of coding standards** over time
+- **Requires constant reminders** about project conventions
+
+**Example**: You ask "fix the broken tests" and Claude doesn't remember your rule: "NEVER claim success if tests are failing"
+
+**Solution**: The `/enhance` command with context-aware CLAUDE.md integration
+
+## How Claude Organize Helps
+
+### 🗂️ Automatic File Organization
 
 ```
 my-project/
 ├── src/                         # Source code stays untouched
 ├── docs/
-│   ├── testing/                 # All test results organized
+│   ├── testing/                 # Test results organized
 │   └── troubleshooting/         # Debug notes in one place
 └── scripts/
     ├── checks/                  # Validation scripts grouped
     └── debug/                   # Debug utilities together
+```
+
+### 🧠 Context-Aware Prompt Enhancement
+
+```bash
+# Your vague request
+/enhance fix the broken tests
+
+# Enhanced with relevant CLAUDE.md rules
+✓ Includes: "NEVER claim success if tests are failing"
+✓ Includes: "ALWAYS verify functionality before declaring completion"
+✓ Structured debugging plan with success criteria
 ```
 
 ## Quick Start
@@ -57,7 +80,7 @@ my-project/
 npm install -g claude-organize
 ```
 
-### Setup with Claude Code
+### Setup File Organization
 
 Add to your `.claude/settings.json`:
 
@@ -74,22 +97,55 @@ Add to your `.claude/settings.json`:
 }
 ```
 
-### Basic Usage
+### Use the /enhance Command
 
-Files are automatically organized when you create or edit them with Claude Code:
+The `/enhance` command is automatically installed to `~/.claude/commands/` and ready to use:
 
-- `debug-api.md` → `docs/troubleshooting/debug-api.md`
-- `check-status.mjs` → `scripts/checks/check-status.mjs`
-- `deployment-guide.md` → `docs/operations/deployment-guide.md`
+```bash
+/enhance create a deployment guide
+# → Comprehensive prompt with relevant CLAUDE.md rules included
+```
 
 ## Key Features
 
-✅ **Works Around Claude Code** - Automatically fixes the mess after creation  
-✅ **Intelligent Script Subcategories** - 10 purpose-based subcategories  
-✅ **Post-creation Cleanup** - Moves files where they should have been created  
-✅ **Safe Defaults** - Protects important files like README, LICENSE, configs  
-✅ **Experimental JavaScript Organization** - Ultra-careful safety validation  
-✅ **Reduces Context Clutter** - Organized files = cleaner Claude Code context
+### File Organization (Hooks)
+
+✅ **Automatic cleanup** - Files move to proper directories instantly  
+✅ **AI categorization** - Understands file purpose from content  
+✅ **10 script subcategories** - Detailed organization for scripts  
+✅ **Safe defaults** - Protects README, LICENSE, configs  
+✅ **Context reduction** - Cleaner workspace = better Claude performance
+
+### Prompt Enhancement (/enhance)
+
+✅ **Context engineering** - Selects only relevant project rules  
+✅ **CLAUDE.md integration** - Automatically includes applicable guidelines  
+✅ **Smart detection** - Understands task type from your request  
+✅ **Efficient prompts** - No rule dumping, only what's needed  
+✅ **Works in plan mode** - Compatible with Claude's planning features
+
+## Architecture
+
+### How It All Works
+
+![Architecture Overview](docs/architecture/architecture.png)
+
+**File Organization**: User → Claude Code → Hook → claude-organize → AI → Organized Files
+
+### The /enhance Command Flow
+
+![Enhance Command](docs/architecture/enhance-command.png)
+
+**Prompt Enhancement**: User → /enhance → Reads CLAUDE.md → Context Analysis → Enhanced Prompt
+
+### Hooks vs Slash Commands
+
+![Hooks vs Commands](docs/architecture/hooks-vs-commands.png)
+
+- **Hooks**: Automatic, background file organization
+- **Slash Commands**: Interactive, user-initiated enhancements
+
+[View all architecture diagrams →](docs/architecture/)
 
 ## Documentation
 
@@ -101,69 +157,6 @@ Files are automatically organized when you create or edit them with Claude Code:
 | ⚙️ [Configuration](docs/configuration.md)                   | Customize behavior and settings          |
 | 🔧 [JavaScript Organization](docs/js-organization-guide.md) | Experimental JS/MJS features             |
 | 🛠️ [Troubleshooting](docs/troubleshooting/)                 | Common issues and solutions              |
-| 🤝 [Contributing](CONTRIBUTING.md)                          | How to contribute to the project         |
-
-## The `/enhance` Command
-
-Transform vague requests into comprehensive, well-structured prompts using [Claude's best practices](https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/claude-4-best-practices). This powerful slash command is included with claude-organize and automatically installed to your Claude commands directory.
-
-### What it does
-
-Takes your brief request and transforms it into a detailed specification with:
-
-- Clear objectives and requirements
-- Explicit success criteria
-- Structured format with context
-- Edge cases and constraints
-- **NEW**: Context-aware CLAUDE.md rule integration
-
-### Context-Aware Enhancement
-
-The `/enhance` command now intelligently incorporates project-specific rules from CLAUDE.md:
-
-1. **Detects task context** - Analyzes your request to understand the type of task
-2. **Selects relevant rules** - Extracts only applicable rules from CLAUDE.md
-3. **Maintains focus** - Includes only contextually appropriate guidance
-4. **Preserves efficiency** - No unnecessary rule injection
-
-### How it works
-
-The `/enhance` command transforms minimal input into comprehensive prompts:
-
-```bash
-# Transform vague requests into detailed specifications
-/enhance Fix the broken authentication → Detailed auth debugging plan
-/enhance Create API docs → Comprehensive documentation structure
-/enhance Make it faster → Performance optimization requirements
-```
-
-### Real transformations
-
-**Input**: `/enhance fix the broken tests`  
-**Output**: Enhanced prompt with:
-
-- Detailed debugging plan
-- **Relevant CLAUDE.md rules**: "NEVER claim success if tests are failing"
-- Testing methodology
-- Success criteria
-
-**Input**: `/enhance create deployment guide`  
-**Output**: Enhanced prompt with:
-
-- Documentation structure
-- **Relevant CLAUDE.md rules**: "docs/operations/ - Deployment guides"
-- Content requirements
-- Organization guidance
-
-The command uses context engineering principles to select only relevant project rules, keeping the enhanced prompt focused and efficient. Works in both normal and plan modes.
-
-## Other Slash Commands
-
-When using Claude Code, you also have access to:
-
-- `/claude-organize-bypass` - Toggle organization on/off
-- `/claude-organize-add <pattern>` - Add patterns to be organized
-- `/claude-organize-js` - Enable JavaScript organization (experimental)
 
 ## Categories
 
@@ -175,40 +168,57 @@ Files are automatically organized into these directories:
 - `docs/analysis/` - Data analysis, performance reports
 - `docs/architecture/` - System design, technical docs
 - `docs/operations/` - Deployment guides, runbooks
-- `docs/development/` - Implementation details
 - `docs/troubleshooting/` - Debug logs, issue investigations
 
-### Scripts (with intelligent subcategories)
+### Scripts
 
 - `scripts/checks/` - Verification and validation utilities
 - `scripts/testing/` - Test scripts and runners
-- `scripts/fixes/` - Scripts that fix or repair issues
 - `scripts/deployment/` - Deployment and release scripts
 - `scripts/utilities/` - General utility scripts
-- [+ 5 more subcategories](docs/subcategories.md)
+- [+ 6 more subcategories](docs/subcategories.md)
 
-## Architecture
+## Common Scenarios
 
-### How It Works
+### The "Create and Run" Learning Curve
 
-![Architecture Overview](docs/architecture/architecture.png)
+You might encounter this scenario:
 
-**Simple Flow**: User → Claude Code → claude-organize → AI → Organized Files
+```
+Claude: "I'll create test-email.mjs and run it"
+*Creates file*
+*File gets organized to scripts/testing/*
+Claude: "Error: Cannot find module './test-email.mjs'"
+```
 
-### File Organization Process
+**This is intentional!** The friction teaches Claude (and us) better habits:
 
-![Sequence Diagram](docs/architecture/sequence.png)
+1. **First time**: Claude learns files don't stay at root
+2. **Second time**: Claude checks where files went (`find . -name "test-email.mjs"`)
+3. **Third time**: Claude runs directly from organized location
 
-**6 Steps**: Create file → Hook triggers → AI analyzes → Returns category → File moves → Success!
+Just like training a junior developer: "Test files go in the test directory."
 
-### Slash Commands vs Hooks
+**Pro tip**: Use `/enhance` to help Claude understand the project structure:
 
-![Hooks vs Commands](docs/architecture/hooks-vs-commands.png)
+```bash
+/enhance create and test email functionality
+# The enhanced prompt will remind Claude about automatic organization
+```
 
-- **Hooks**: Automatic file organization (claude-organize)
-- **Slash Commands**: Interactive text enhancement (/enhance)
+### Why This Matters
 
-[View all architecture diagrams →](docs/architecture/)
+The housekeeper doesn't compromise on cleanliness. This "friction" is actually a feature:
+
+- Claude learns project structure through experience
+- Better long-term habits > short-term convenience
+- Consistent organization > temporary files at root
+
+## Other Slash Commands
+
+- `/claude-organize-bypass` - Toggle file organization on/off
+- `/claude-organize-add <pattern>` - Add patterns to be organized
+- `/claude-organize-js` - Enable JavaScript organization (experimental)
 
 ## Safety & Disclaimers
 
