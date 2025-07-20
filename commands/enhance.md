@@ -11,7 +11,15 @@ Transform the following request into a comprehensive, well-structured prompt tha
 
 ## Instructions for Claude
 
-### Step 0: Context Analysis and Rule Selection
+### Step 0: Handle Empty Arguments
+
+If $ARGUMENTS is empty or just whitespace:
+
+1. Check the conversation history for the user's last substantive message
+2. Use that message as the request to enhance
+3. If no previous message exists, ask the user to provide a request to enhance
+
+### Step 1: Context Analysis and Rule Selection
 
 1. **Detect CLAUDE.md**: Check for CLAUDE.md in the current project and parent directories
 2. **Analyze Request Context**: Identify the task type and relevant categories:
@@ -30,9 +38,7 @@ Transform the following request into a comprehensive, well-structured prompt tha
    - Documentation → Document Organization rules
    - Multiple contexts → Combine relevant rule sets
 
-4. **Check Plan Mode**: If in plan mode, use exit_plan_mode to present the enhanced prompt
-
-### Step 1: Generate Enhanced Prompt
+### Step 2: Generate Enhanced Prompt
 
 Apply these transformations:
 
@@ -61,15 +67,18 @@ Apply these transformations:
    - Add measurable criteria for success
    - Include examples where helpful
 
-### Step 2: Handle Based on Mode
+### Step 3: Handle Based on Mode
 
 **If in Normal Mode**: Execute the enhanced prompt directly
 
 **If in Plan Mode**:
 
-1. Call exit_plan_mode with the enhanced prompt as the plan
-2. This will show the user the enhanced prompt and ask for confirmation
-3. If approved, the enhanced prompt will be executed
+1. Generate the complete enhanced prompt first (don't pass the template!)
+2. Call exit_plan_mode with the ACTUAL enhanced prompt content as the plan
+3. This will show the user the enhanced prompt and ask for confirmation
+4. If approved, the enhanced prompt will be executed
+
+CRITICAL: The plan parameter must contain the generated enhanced prompt, not this instruction template!
 
 ## Enhanced Prompt Structure Template
 
