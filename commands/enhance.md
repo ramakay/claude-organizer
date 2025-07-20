@@ -78,12 +78,18 @@ Apply these transformations:
 
 **If in Plan Mode**:
 
-1. Generate the complete enhanced prompt first (don't pass the template!)
-2. Call exit_plan_mode with the ACTUAL enhanced prompt content as the plan
-3. This will show the user the enhanced prompt and ask for confirmation
-4. If approved, the enhanced prompt will be executed
+1. Generate the complete enhanced prompt using the template below
+2. Fill in ALL sections with actual content based on the user's request
+3. Replace ALL placeholders like [Background and setup information] with real content
+4. The final enhanced prompt should be a complete, executable instruction
+5. Pass this COMPLETE enhanced prompt (as a string) to exit_plan_mode's plan parameter
+6. DO NOT pass the template itself or any empty content
 
-CRITICAL: The plan parameter must contain the generated enhanced prompt, not this instruction template!
+CRITICAL: The plan parameter must contain the FULLY GENERATED enhanced prompt with all sections filled in, not the template! Example:
+
+```
+exit_plan_mode(plan="<enhanced_prompt>\n<context>\nThe user needs to complete three pending tasks...\n</context>\n<objective>\nComplete the implementation of email sending functionality...\n</objective>\n...</enhanced_prompt>")
+```
 
 ## Enhanced Prompt Structure Template
 
