@@ -43,7 +43,45 @@ Claude Code struggles to maintain project context throughout conversations. You 
 
 **Example**: You ask "fix the broken tests" and Claude doesn't remember your rule: "NEVER claim success if tests are failing"
 
-**Solution**: The `/enhance` command with context-aware CLAUDE.md integration
+**Solution**: The `/enhance` command with two-pass prompt enhancement
+
+#### Before and After
+
+**Before** (what you type):
+
+```
+fix the broken tests
+```
+
+**After** `/enhance` (what Claude receives):
+
+```
+I need help fixing broken tests in this project.
+
+Context:
+- Identify which tests are failing and why
+- Review test output and error messages
+- Fix the underlying issues causing test failures
+- Verify all tests pass after fixes
+
+Requirements:
+- Run the full test suite first to see current state
+- Fix one test at a time, verifying each fix
+- Ensure no regression in other tests
+- Document any significant changes made
+
+Project-Specific Rules (from CLAUDE.md):
+- NEVER claim success if tests are failing
+- ALWAYS verify functionality before declaring completion
+- Run lint and typecheck after changes
+
+Success Criteria:
+- All tests pass
+- No linting errors
+- Code changes are minimal and focused
+```
+
+**💡 Pro Tip**: Use Shift+P (plan mode) with `/enhance` to review the context selection and prompt engineering before execution
 
 ## How Claude Organize Helps
 
