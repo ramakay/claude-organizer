@@ -105,7 +105,7 @@ Files are automatically organized when you create or edit them with Claude Code:
 
 ## The `/enhance` Command
 
-Transform vague requests into comprehensive, well-structured prompts using [Claude's best practices](https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/claude-4-best-practices). This powerful slash command works directly in Claude Code - no setup required.
+Transform vague requests into comprehensive, well-structured prompts using [Claude's best practices](https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/claude-4-best-practices). This powerful slash command is included with claude-organize and automatically installed to your Claude commands directory.
 
 ### What it does
 

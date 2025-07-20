@@ -1,6 +1,6 @@
 {
   "name": "claude-organize",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Intelligent document organization for Claude Code using hooks",
   "author": "Rama Annaswamy",
   "license": "MIT",
@@ -29,6 +29,8 @@
   },
   "files": [
     "dist",
+    "commands",
+    "scripts/postinstall.js",
     "README.md",
     "LICENSE"
   ],
@@ -45,7 +47,8 @@
     "format:check": "prettier --check .",
     "clean": "rm -rf dist coverage",
     "prepublishOnly": "npm run clean && npm run build && npm run test",
-    "prepare": "npm run build && husky install"
+    "prepare": "npm run build && husky install",
+    "postinstall": "node scripts/postinstall.js"
   },
   "dependencies": {
     "dotenv": "^16.3.1",
