@@ -1,0 +1,36 @@
+title: Claude Organize Architecture
+description: Intelligent document organization for Claude Code using AI-powered categorization
+theme: jekyll-theme-minimal
+markdown: kramdown
+
+# GitHub Pages settings
+repository: ramakay/claude-organize
+baseurl: '/claude-organize'
+url: 'https://ramakay.github.io'
+
+# Build settings
+plugins:
+  - jekyll-relative-links
+  - jekyll-seo-tag
+
+# Exclude files from processing
+exclude:
+  - node_modules
+  - vendor
+  - .gitignore
+  - package.json
+  - package-lock.json
+  - '*.log'
+  - troubleshooting/
+
+# Include specific files
+include:
+  - index.md
+  - architecture.md
+
+# Default layout
+defaults:
+  - scope:
+      path: ''
+    values:
+      layout: 'default'

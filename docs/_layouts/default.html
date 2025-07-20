@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="{{ site.lang | default: "en-US" }}">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  {% seo %}
+  
+  <link rel="stylesheet" href="{{ "/assets/css/style.css?v=" | append: site.github.build_revision | relative_url }}">
+  
+  <!-- Mermaid support -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({ 
+      startOnLoad: true,
+      theme: 'default',
+      themeVariables: {
+        primaryColor: '#f0f0f0',
+        primaryTextColor: '#333',
+        primaryBorderColor: '#333',
+        lineColor: '#333',
+        secondaryColor: '#e0e0e0',
+        tertiaryColor: '#d0d0d0',
+        background: '#fff',
+        mainBkg: '#f5f5f5',
+        secondBkg: '#e5e5e5',
+        tertiaryBkg: '#d5d5d5',
+        primaryBoxBkg: '#f0f0f0',
+        primaryBoxBorder: '#333',
+        primaryBoxTextColor: '#333'
+      },
+      flowchart: { 
+        useMaxWidth: true,
+        htmlLabels: true,
+        curve: 'basis'
+      },
+      sequence: {
+        useMaxWidth: true,
+        actorMargin: 50,
+        messageMargin: 40,
+        mirrorActors: true,
+        bottomMarginAdj: 10
+      }
+    });
+  </script>
+  
+  <style>
+    .mermaid {
+      margin: 20px 0;
+      text-align: center;
+    }
+    
+    .wrapper {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    
+    section {
+      max-width: 100%;
+    }
+    
+    /* Style for mermaid diagrams */
+    .mermaid svg {
+      max-width: 100%;
+      height: auto;
+    }
+    
+    /* Navigation */
+    nav {
+      background-color: #f5f5f5;
+      padding: 10px 0;
+      margin-bottom: 30px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    
+    nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      gap: 20px;
+    }
+    
+    nav a {
+      color: #333;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    
+    nav a:hover {
+      color: #0366d6;
+    }
+    
+    /* Code blocks */
+    pre {
+      background-color: #f6f8fa;
+      border-radius: 6px;
+      padding: 16px;
+      overflow: auto;
+    }
+    
+    code {
+      background-color: #f6f8fa;
+      padding: 2px 4px;
+      border-radius: 3px;
+      font-size: 85%;
+    }
+    
+    /* Headers */
+    h1, h2, h3 {
+      color: #24292e;
+      margin-top: 24px;
+      margin-bottom: 16px;
+    }
+    
+    h1 {
+      padding-bottom: 0.3em;
+      border-bottom: 1px solid #eaecef;
+    }
+    
+    /* Links */
+    a {
+      color: #0366d6;
+      text-decoration: none;
+    }
+    
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="wrapper">
+      <ul>
+        <li><a href="{{ '/' | relative_url }}">Architecture</a></li>
+        <li><a href="https://github.com/ramakay/claude-organize">GitHub</a></li>
+        <li><a href="https://www.npmjs.com/package/claude-organize">npm</a></li>
+        <li><a href="{{ '/README.html' | relative_url }}">Documentation</a></li>
+      </ul>
+    </div>
+  </nav>
+  
+  <div class="wrapper">
+    <section>
+      {{ content }}
+    </section>
+    
+    <footer>
+      <p><small>
+        &copy; {{ 'now' | date: "%Y" }} Claude Organize. 
+        <a href="https://github.com/ramakay/claude-organize">View on GitHub</a>
+      </small></p>
+    </footer>
+  </div>
+</body>
+</html>

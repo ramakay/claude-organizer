@@ -1,0 +1,209 @@
+---
+---
+
+@import "{{ site.theme }}";
+
+// Custom styles for Claude Organize documentation
+
+// Override max-width for better diagram display
+.wrapper {
+  max-width: 1200px;
+}
+
+section {
+  max-width: 100%;
+  float: none;
+  width: auto;
+}
+
+// Mermaid diagram styling
+.mermaid {
+  margin: 30px auto;
+  text-align: center;
+  background-color: #fafafa;
+  border: 1px solid #e1e4e8;
+  border-radius: 6px;
+  padding: 20px;
+  
+  svg {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+// Better code block styling
+pre {
+  background-color: #f6f8fa;
+  border: 1px solid #e1e4e8;
+  border-radius: 6px;
+  font-size: 14px;
+  line-height: 1.45;
+  overflow: auto;
+  padding: 16px;
+  
+  code {
+    background-color: transparent;
+    border: 0;
+    display: inline;
+    line-height: inherit;
+    margin: 0;
+    overflow: visible;
+    padding: 0;
+    word-wrap: normal;
+  }
+}
+
+// Inline code styling
+code {
+  background-color: rgba(27,31,35,.05);
+  border-radius: 3px;
+  font-size: 85%;
+  margin: 0;
+  padding: .2em .4em;
+}
+
+// Header styling
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+h1 {
+  padding-bottom: .3em;
+  font-size: 2em;
+  border-bottom: 1px solid #eaecef;
+}
+
+h2 {
+  padding-bottom: .3em;
+  font-size: 1.5em;
+  border-bottom: 1px solid #eaecef;
+}
+
+h3 {
+  font-size: 1.25em;
+}
+
+// Table styling
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 16px;
+  
+  th, td {
+    padding: 6px 13px;
+    border: 1px solid #dfe2e5;
+  }
+  
+  tr {
+    background-color: #fff;
+    border-top: 1px solid #c6cbd1;
+    
+    &:nth-child(2n) {
+      background-color: #f6f8fa;
+    }
+  }
+  
+  th {
+    font-weight: 600;
+    background-color: #f1f3f4;
+  }
+}
+
+// Navigation improvements
+header {
+  display: none; // Hide default Jekyll header
+}
+
+nav {
+  background-color: #24292e;
+  color: #fff;
+  padding: 16px 0;
+  margin-bottom: 30px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 30px;
+    align-items: center;
+  }
+  
+  a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 500;
+    transition: opacity 0.2s;
+    
+    &:hover {
+      opacity: 0.8;
+      text-decoration: none;
+    }
+  }
+}
+
+// Footer styling
+footer {
+  margin-top: 50px;
+  padding-top: 20px;
+  border-top: 1px solid #e1e4e8;
+  text-align: center;
+  color: #586069;
+}
+
+// Responsive design
+@media screen and (max-width: 960px) {
+  .wrapper {
+    padding: 0 20px;
+  }
+  
+  nav ul {
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+}
+
+// Print styles
+@media print {
+  nav {
+    display: none;
+  }
+  
+  .mermaid {
+    break-inside: avoid;
+  }
+}
+
+// Syntax highlighting for JSON
+.language-json {
+  .s2 { color: #032f62; } // strings
+  .p { color: #24292e; }  // punctuation
+  .nl { color: #005cc5; } // labels
+  .mi { color: #005cc5; } // numbers
+  .kc { color: #005cc5; } // constants
+}
+
+// Mindmap specific styling
+.mermaid[data-type="mindmap"] {
+  svg {
+    .node {
+      cursor: pointer;
+    }
+    
+    .node circle {
+      fill: #f9f9f9;
+      stroke: #333;
+      stroke-width: 1.5px;
+    }
+    
+    .node text {
+      font-size: 12px;
+    }
+  }
+}
