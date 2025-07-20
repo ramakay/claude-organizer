@@ -130,13 +130,27 @@ You have two options to configure the file organization hook:
 
 #### Option 1: Using Claude's /hooks command (Recommended)
 
-Simply ask Claude to add the hook for you:
+Use Claude Code's built-in /hooks command to configure:
 
 ```bash
-# In Claude Code, just type:
-"Add the claude-organize hook using /hooks"
+# Step 1: Type the /hooks command
+/hooks
 
-# Claude will use the /hooks command to configure it automatically
+# Step 2: Select "PostToolUse" from the menu
+
+# Step 3: Enter the matcher pattern:
+Write|Edit|MultiEdit
+
+# Step 4: Select "command" as the hook type
+
+# Step 5: Enter the command:
+claude-organize
+
+# Step 6: Press Enter to confirm
+
+# Step 7: Press Esc twice to exit the menu
+
+# That's it! The hook is now configured
 ```
 
 #### Option 2: Manual Configuration
