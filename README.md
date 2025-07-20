@@ -115,6 +115,16 @@ Takes your brief request and transforms it into a detailed specification with:
 - Explicit success criteria
 - Structured format with context
 - Edge cases and constraints
+- **NEW**: Context-aware CLAUDE.md rule integration
+
+### Context-Aware Enhancement
+
+The `/enhance` command now intelligently incorporates project-specific rules from CLAUDE.md:
+
+1. **Detects task context** - Analyzes your request to understand the type of task
+2. **Selects relevant rules** - Extracts only applicable rules from CLAUDE.md
+3. **Maintains focus** - Includes only contextually appropriate guidance
+4. **Preserves efficiency** - No unnecessary rule injection
 
 ### How it works
 
@@ -129,23 +139,23 @@ The `/enhance` command transforms minimal input into comprehensive prompts:
 
 ### Real transformations
 
-**Input**: `/enhance fix the broken thing`  
-**Output**: Detailed debugging plan with:
+**Input**: `/enhance fix the broken tests`  
+**Output**: Enhanced prompt with:
 
-- Problem identification steps
-- Root cause analysis approach
+- Detailed debugging plan
+- **Relevant CLAUDE.md rules**: "NEVER claim success if tests are failing"
 - Testing methodology
 - Success criteria
 
-**Input**: `/enhance write tests`  
-**Output**: Comprehensive test plan including:
+**Input**: `/enhance create deployment guide`  
+**Output**: Enhanced prompt with:
 
-- Test coverage requirements
-- Edge cases to consider
-- Framework recommendations
-- Quality metrics
+- Documentation structure
+- **Relevant CLAUDE.md rules**: "docs/operations/ - Deployment guides"
+- Content requirements
+- Organization guidance
 
-All enhanced prompts follow Claude 4 best practices for clarity, structure, and actionable output. Works in both normal and plan modes.
+The command uses context engineering principles to select only relevant project rules, keeping the enhanced prompt focused and efficient. Works in both normal and plan modes.
 
 ## Other Slash Commands
 

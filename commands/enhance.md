@@ -1,17 +1,36 @@
 ---
-description: Transform vague requests into well-structured prompts - works in both normal and plan modes
-allowed-tools: [exit_plan_mode]
+description: Transform vague requests into well-structured prompts with context-aware CLAUDE.md integration
+allowed-tools: [exit_plan_mode, Read, Glob]
 ---
 
-# Enhanced Prompt Engineering
+# Enhanced Prompt Engineering with Context Awareness
 
-Transform the following request into a comprehensive, well-structured prompt that follows Claude 4 best practices:
+Transform the following request into a comprehensive, well-structured prompt that follows Claude 4 best practices and incorporates relevant project rules from CLAUDE.md:
 
 **Original Request**: $ARGUMENTS
 
 ## Instructions for Claude
 
-First, check if we're in plan mode by attempting a simple operation. If in plan mode, use exit_plan_mode to present the enhanced prompt as a plan.
+### Step 0: Context Analysis and Rule Selection
+
+1. **Detect CLAUDE.md**: Check for CLAUDE.md in the current project and parent directories
+2. **Analyze Request Context**: Identify the task type and relevant categories:
+
+   **Context Categories**:
+   - **File Operations**: Keywords like "create", "write", "generate", "file", "document", "script"
+   - **Testing**: Keywords like "test", "verify", "validate", "check", "QA", "assert"
+   - **Code Quality**: Keywords like "fix", "debug", "refactor", "optimize", "improve", "clean"
+   - **Documentation**: Keywords like "document", "explain", "describe", "readme", "guide"
+   - **Architecture**: Keywords like "design", "structure", "pattern", "architecture", "diagram"
+   - **Operations**: Keywords like "deploy", "build", "release", "configure", "setup"
+
+3. **Select Relevant Rules**: Based on detected context, extract only applicable rules:
+   - File Operations → File Management rules
+   - Testing → Code Quality rules about tests
+   - Documentation → Document Organization rules
+   - Multiple contexts → Combine relevant rule sets
+
+4. **Check Plan Mode**: If in plan mode, use exit_plan_mode to present the enhanced prompt
 
 ### Step 1: Generate Enhanced Prompt
 
@@ -60,6 +79,15 @@ Apply these transformations:
 [Background and setup information]
 </context>
 
+<project_rules>
+<!-- Only include if CLAUDE.md exists and has relevant rules -->
+<applicable_rules context="[detected context categories]">
+- [Relevant rule 1 from CLAUDE.md]
+- [Relevant rule 2 from CLAUDE.md]
+- [Only rules that apply to the current task]
+</applicable_rules>
+</project_rules>
+
 <objective>
 [Clear statement of what needs to be accomplished]
 </objective>
@@ -89,15 +117,65 @@ Apply these transformations:
 </enhanced_prompt>
 ```
 
-## Examples of Enhancement
+## Examples of Enhancement with Context-Aware Rules
 
-**Vague**: "fix the broken thing"
-**Enhanced**: "Debug and repair the authentication system that is failing to validate user credentials, ensuring proper error handling and logging"
+### Example 1: Testing Context
 
-**Vague**: "make it work better"
-**Enhanced**: "Optimize the database query performance by implementing proper indexing, query caching, and connection pooling to reduce response times by 50%"
+**Original**: "fix the broken tests"
+**Detected Context**: Testing, Code Quality
+**Selected CLAUDE.md Rules**:
 
-**Vague**: "what were the achievements"
-**Enhanced**: "Provide a detailed, evidence-based summary of all concrete achievements in the project, categorized by problem solved and impact delivered, with specific metrics and examples"
+- "NEVER claim success if tests are failing"
+- "ALWAYS verify functionality before declaring completion"
 
-Now, I'll generate the enhanced prompt. If we're in plan mode, I'll use exit_plan_mode to present it properly.
+**Enhanced Prompt**:
+
+```xml
+<project_rules>
+<applicable_rules context="testing, code-quality">
+- NEVER claim success if tests are failing
+- ALWAYS verify functionality before declaring completion
+</applicable_rules>
+</project_rules>
+<objective>Debug and fix failing test cases, ensuring all tests pass before completion</objective>
+```
+
+### Example 2: File Creation Context
+
+**Original**: "create a deployment guide"
+**Detected Context**: Documentation, Operations, File Operations
+**Selected CLAUDE.md Rules**:
+
+- "docs/operations/ - Deployment guides, runbooks"
+- "Create focused .md files for different purposes"
+
+**Enhanced Prompt**:
+
+```xml
+<project_rules>
+<applicable_rules context="documentation, operations, file-operations">
+- docs/operations/ - Deployment guides, runbooks, operational docs
+- Create focused .md files for different purposes (they'll be auto-organized)
+</applicable_rules>
+</project_rules>
+<objective>Create a comprehensive deployment guide in markdown format</objective>
+```
+
+### Example 3: Code Improvement Context
+
+**Original**: "make it work better"
+**Detected Context**: Code Quality, Optimization
+**Selected CLAUDE.md Rules**:
+
+- "Update existing scripts instead of creating new versions"
+- "Document changes appropriately"
+
+## Implementation Process
+
+1. First, I'll check for CLAUDE.md files in the project
+2. Analyze your request to determine the context
+3. Select only the relevant rules for your task
+4. Generate an enhanced prompt with contextual project rules
+5. If in plan mode, present it via exit_plan_mode
+
+Now, I'll analyze your request and generate the context-aware enhanced prompt.
