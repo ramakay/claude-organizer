@@ -78,18 +78,28 @@ Apply these transformations:
 
 **If in Plan Mode**:
 
-1. Generate the complete enhanced prompt using the template below
-2. Fill in ALL sections with actual content based on the user's request
-3. Replace ALL placeholders like [Background and setup information] with real content
-4. The final enhanced prompt should be a complete, executable instruction
-5. Pass this COMPLETE enhanced prompt (as a string) to exit_plan_mode's plan parameter
-6. DO NOT pass the template itself or any empty content
+YOU MUST GENERATE THE ACTUAL ENHANCED PROMPT CONTENT, NOT PASS THE TEMPLATE!
 
-CRITICAL: The plan parameter must contain the FULLY GENERATED enhanced prompt with all sections filled in, not the template! Example:
+1. Read the user's request carefully
+2. Generate ACTUAL CONTENT for each section based on the request
+3. DO NOT use placeholders like [Background] - write the REAL background
+4. DO NOT use brackets [] anywhere - write actual content
+5. Create a complete, ready-to-execute enhanced prompt as a single string
+6. Pass this string to exit_plan_mode(plan="your generated content here")
+
+WRONG (DO NOT DO THIS):
 
 ```
-exit_plan_mode(plan="<enhanced_prompt>\n<context>\nThe user needs to complete three pending tasks...\n</context>\n<objective>\nComplete the implementation of email sending functionality...\n</objective>\n...</enhanced_prompt>")
+exit_plan_mode(plan="<context>[Background and setup information]</context>")
 ```
+
+CORRECT (DO THIS):
+
+```
+exit_plan_mode(plan="<enhanced_prompt>\n<context>\nThe user is experiencing an issue with the /enhance command generating empty plans. They've provided an interaction showing the problem and want a comprehensive fix.\n</context>\n<objective>\nFix the /enhance command to properly generate filled-in enhanced prompts instead of passing empty templates\n</objective>\n<requirements>\n- Identify root cause of empty plan generation\n- Update enhance.md with clearer instructions\n- Ensure Claude generates actual content, not templates\n- Test the fix to verify it works\n</requirements>\n</enhanced_prompt>")
+```
+
+THE PLAN MUST BE THE ACTUAL ENHANCED PROMPT WITH REAL CONTENT!
 
 ## Enhanced Prompt Structure Template
 
@@ -197,5 +207,59 @@ exit_plan_mode(plan="<enhanced_prompt>\n<context>\nThe user needs to complete th
 3. Select only the relevant rules for your task
 4. Generate an enhanced prompt with contextual project rules
 5. If in plan mode, present it via exit_plan_mode
+
+## COMPLETE EXAMPLE FOR PLAN MODE
+
+If the user types: `/enhance fix the authentication bug`
+
+You should call exit_plan_mode with ACTUAL CONTENT like this:
+
+```
+exit_plan_mode(plan="<enhanced_prompt>
+<context>
+The user is experiencing an authentication bug that needs to be fixed. This involves debugging the authentication system, identifying the root cause, and implementing a fix while ensuring no regressions.
+</context>
+
+<project_rules>
+<applicable_rules context=\"code-quality, testing\">
+- NEVER claim success if tests are failing
+- ALWAYS verify functionality before declaring completion
+- Update existing code instead of creating new versions
+</applicable_rules>
+</project_rules>
+
+<objective>
+Debug and fix the authentication bug in the system, ensuring proper functionality is restored
+</objective>
+
+<requirements>
+- Investigate the authentication flow to identify where it's failing
+- Check error logs and debug output for clues
+- Review recent changes that might have introduced the bug
+- Implement a fix that addresses the root cause
+- Ensure the fix doesn't break existing functionality
+</requirements>
+
+<constraints>
+- Maintain backward compatibility with existing auth tokens
+- Don't modify the authentication API interface
+- Preserve existing user sessions during the fix
+</constraints>
+
+<deliverables>
+- Fixed authentication code with the bug resolved
+- Updated tests that verify the fix
+- Brief explanation of what caused the bug
+</deliverables>
+
+<success_criteria>
+- All authentication tests pass
+- Users can successfully log in and maintain sessions
+- No regression in existing authentication features
+</success_criteria>
+</enhanced_prompt>")
+```
+
+NEVER pass the template with brackets! Always generate real content!
 
 Now, I'll analyze your request and generate the context-aware enhanced prompt.
