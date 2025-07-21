@@ -100,20 +100,22 @@ my-project/
     └── debug/                   # Debug utilities together
 ```
 
-### 🧠 Two-Pass Prompt Enhancement
+### 🧠 Smart Context Selection
 
 ```bash
 # Your vague request
 /enhance fix the broken tests
 
-# Pass 1: Expands using Claude's prompt best practices
-✓ Transforms 3 words into comprehensive specification
-✓ Adds context, success criteria, and structure
+# What happens:
+✓ Analyzes your request to understand the task type
+✓ Extracts ONLY relevant rules (e.g., testing rules for test tasks)
+✓ Creates a comprehensive but concise specification
+✓ Adds necessary context without bloating
 
-# Pass 2: Integrates relevant CLAUDE.md rules
-✓ Includes: "NEVER claim success if tests are failing"
-✓ Includes: "ALWAYS verify functionality before declaring completion"
-✓ Only adds rules relevant to the task at hand
+# Example - from 100-line CLAUDE.md, only extracts:
+✓ "NEVER claim success if tests are failing"
+✓ "ALWAYS verify functionality before declaring completion"
+✓ Ignores unrelated rules about file naming, deployment, etc.
 ```
 
 ## Quick Start
@@ -178,6 +180,32 @@ The `/enhance` command is automatically installed to `~/.claude/commands/` and r
 /enhance create a deployment guide
 # → Comprehensive prompt with relevant CLAUDE.md rules included
 ```
+
+## How This Complements Claude Code Best Practices
+
+According to [Claude Code Best Practices](https://www.anthropic.com/engineering/claude-code-best-practices), the recommended approaches include:
+
+- **Hierarchical CLAUDE.md files** - Great for static organization in monorepos
+- **Shorter sessions with /clear** - Helps manage context effectively
+- **Using subagents** - Reduces context usage for complex tasks
+
+**Claude Organize complements these practices:**
+
+1. **File Organization (Hooks)** - Works regardless of session length. Even with `/clear` and perfect CLAUDE.md setup, Claude still creates files in root. Our hooks ensure consistent organization.
+
+2. **The `/enhance` Command** - Bridges the gap between static rules and dynamic application:
+   - Hierarchical CLAUDE.md = Foundation (what rules exist)
+   - `/enhance` = Application (which rules apply now)
+   - Perfect for planning mode where context often gets lost
+
+3. **Just-in-Time Context** - Instead of hoping Claude remembers rules from startup or manually reminding it, `/enhance` surgically injects only the relevant 2-5 rules exactly when needed.
+
+Think of it this way:
+
+- **Best Practices**: Organize your kitchen (hierarchical CLAUDE.md)
+- **Claude Organize**: Clean as you cook (hooks) + grab the right tools (enhance)
+
+Both approaches work together for optimal Claude Code workflows.
 
 ## Key Features
 
@@ -257,6 +285,8 @@ Files are automatically organized into these directories:
 
 ### The "Create and Run" Learning Curve
 
+![Learning Curve](docs/assets/images/learning-curve.jpeg)
+
 You might encounter this scenario:
 
 ```
@@ -278,8 +308,14 @@ Just like training a junior developer: "Test files go in the test directory."
 
 ```bash
 /enhance create and test email functionality
-# The enhanced prompt will remind Claude about automatic organization
+# The enhanced prompt will:
+# - Extract only relevant CLAUDE.md rules (not the entire file)
+# - Add necessary context and structure
+# - Include project-specific conventions
+# - Create a comprehensive but concise plan
 ```
+
+The `/enhance` command has been optimized to be "comprehensive but concise" - adding only necessary detail instead of arbitrary expansion. It performs surgical context injection, selecting just the 2-5 most relevant rules from your CLAUDE.md instead of dumping everything.
 
 ### Why This Matters
 
