@@ -80,56 +80,9 @@ Apply these transformations:
 
 YOU MUST GENERATE THE ACTUAL ENHANCED PROMPT CONTENT, NOT PASS THE TEMPLATE!
 
-### CRITICAL STRING FORMATTING REQUIREMENTS
+Generate a complete enhanced prompt with ALL sections filled with real content, then pass it to exit_plan_mode as a properly formatted string.
 
-1. **ALL newlines MUST be escaped as \n** - NEVER use actual line breaks
-2. **ALL quotes MUST be escaped as \"** - This includes quotes in rules, requirements, etc.
-3. **XML tags are plain text** - They are NOT HTML, just include them as regular text
-4. **Build the string in ONE LINE** - The entire exit_plan_mode call must be a single line
-5. **NO multi-line strings** - Do not use multi-line string syntax
-
-### Step-by-Step String Construction
-
-1. Start with: `exit_plan_mode(plan="`
-2. Add your content with ALL newlines as `\n`
-3. Escape ALL quotes as `\"`
-4. End with: `")`
-5. The ENTIRE call must be on ONE LINE
-
-### WRONG (These will create empty plans):
-
-```
-# WRONG: Multi-line string
-exit_plan_mode(plan="<enhanced_prompt>
-<context>
-This has actual newlines
-</context>
-</enhanced_prompt>")
-
-# WRONG: Unescaped quotes
-exit_plan_mode(plan="<rules>Use "quotes" properly</rules>")
-
-# WRONG: Template placeholders
-exit_plan_mode(plan="<context>[Background info]</context>")
-```
-
-### CORRECT (This will work):
-
-```
-exit_plan_mode(plan="<enhanced_prompt>\n<context>\nThe user is experiencing an issue with the /enhance command generating empty plans. They've provided an interaction showing the problem and want a comprehensive fix.\n</context>\n<objective>\nFix the /enhance command to properly generate filled-in enhanced prompts instead of passing empty templates\n</objective>\n<requirements>\n- Identify root cause of empty plan generation\n- Update enhance.md with clearer instructions\n- Ensure Claude generates actual content, not templates\n- Test the fix to verify it works\n</requirements>\n<project_rules>\n<applicable_rules context=\"code-quality\">\n- ALWAYS verify functionality before declaring completion\n- Document changes appropriately\n</applicable_rules>\n</project_rules>\n</enhanced_prompt>")
-```
-
-### String Formatting Checklist
-
-Before calling exit_plan_mode, verify:
-
-- [ ] Is the entire call on ONE line?
-- [ ] Are ALL newlines replaced with \n?
-- [ ] Are ALL quotes escaped as \"?
-- [ ] Is there real content (no placeholders)?
-- [ ] Does the string start and end with proper quotes?
-
-THE PLAN MUST BE A PROPERLY FORMATTED SINGLE-LINE STRING WITH ESCAPED CHARACTERS!
+**IMPORTANT**: The exit_plan_mode tool expects a multi-line string with the enhanced prompt formatted for readability. Use actual newlines to format the content clearly.
 
 ## Enhanced Prompt Structure Template
 
@@ -177,58 +130,112 @@ THE PLAN MUST BE A PROPERLY FORMATTED SINGLE-LINE STRING WITH ESCAPED CHARACTERS
 </enhanced_prompt>
 ```
 
-## Examples of Enhancement with Context-Aware Rules
+## Examples for Plan Mode
 
-### Example 1: Testing Context
+### Example 1: Simple Enhancement
 
-**Original**: "fix the broken tests"
-**Detected Context**: Testing, Code Quality
-**Selected CLAUDE.md Rules**:
+If the user types: `/enhance add logging to the system`
 
-- "NEVER claim success if tests are failing"
-- "ALWAYS verify functionality before declaring completion"
+Call exit_plan_mode with:
 
-**Enhanced Prompt**:
+```
+exit_plan_mode(plan="<enhanced_prompt>
+<context>
+The user wants to add logging functionality to the system for better debugging and monitoring capabilities.
+</context>
 
-```xml
+<objective>
+Implement comprehensive logging throughout the system
+</objective>
+
+<requirements>
+- Add structured logging with appropriate log levels (DEBUG, INFO, WARN, ERROR)
+- Include timestamps and context information in all log entries
+- Ensure sensitive data (passwords, tokens, PII) is not logged
+- Implement log rotation to manage disk space
+- Add configuration for log levels per module
+</requirements>
+
+<deliverables>
+- Logging utility module with standardized interface
+- Configuration file for log settings
+- Updated modules to use the new logging system
+- Documentation on how to use the logging system
+</deliverables>
+
+<success_criteria>
+- All modules use the centralized logging system
+- No sensitive information appears in logs
+- Logs are properly formatted and searchable
+- Performance impact is minimal (<1% overhead)
+</success_criteria>
+</enhanced_prompt>")
+```
+
+### Example 2: Complex Enhancement with CLAUDE.md Rules
+
+If the user types: `/enhance fix the authentication bug`
+
+Call exit_plan_mode with:
+
+```
+exit_plan_mode(plan="<enhanced_prompt>
+<context>
+The user is experiencing an authentication bug that needs to be fixed. This involves debugging the authentication system, identifying the root cause, and implementing a fix while ensuring no regressions.
+</context>
+
 <project_rules>
-<applicable_rules context="testing, code-quality">
+<applicable_rules context="code-quality, testing">
 - NEVER claim success if tests are failing
 - ALWAYS verify functionality before declaring completion
+- Update existing code instead of creating new versions
+- Document changes appropriately
 </applicable_rules>
 </project_rules>
-<objective>Debug and fix failing test cases, ensuring all tests pass before completion</objective>
+
+<objective>
+Debug and fix the authentication bug in the system, ensuring proper functionality is restored
+</objective>
+
+<requirements>
+- Investigate the authentication flow to identify where it's failing
+- Check error logs and debug output for clues
+- Review recent changes that might have introduced the bug
+- Implement a fix that addresses the root cause
+- Ensure the fix doesn't break existing functionality
+- Add tests to prevent regression
+</requirements>
+
+<constraints>
+- Maintain backward compatibility with existing auth tokens
+- Don't modify the authentication API interface
+- Preserve existing user sessions during the fix
+- Follow existing code patterns and conventions
+</constraints>
+
+<deliverables>
+- Fixed authentication code with the bug resolved
+- Updated or new tests that verify the fix
+- Brief explanation of what caused the bug
+- Any necessary migration scripts if data structures changed
+</deliverables>
+
+<success_criteria>
+- All authentication tests pass
+- Users can successfully log in and maintain sessions
+- No regression in existing authentication features
+- The specific reported bug no longer occurs
+</success_criteria>
+</enhanced_prompt>")
 ```
 
-### Example 2: File Creation Context
+### Key Points for Plan Mode
 
-**Original**: "create a deployment guide"
-**Detected Context**: Documentation, Operations, File Operations
-**Selected CLAUDE.md Rules**:
-
-- "docs/operations/ - Deployment guides, runbooks"
-- "Create focused .md files for different purposes"
-
-**Enhanced Prompt**:
-
-```xml
-<project_rules>
-<applicable_rules context="documentation, operations, file-operations">
-- docs/operations/ - Deployment guides, runbooks, operational docs
-- Create focused .md files for different purposes (they'll be auto-organized)
-</applicable_rules>
-</project_rules>
-<objective>Create a comprehensive deployment guide in markdown format</objective>
-```
-
-### Example 3: Code Improvement Context
-
-**Original**: "make it work better"
-**Detected Context**: Code Quality, Optimization
-**Selected CLAUDE.md Rules**:
-
-- "Update existing scripts instead of creating new versions"
-- "Document changes appropriately"
+1. **Generate complete content** - Fill in ALL sections with real information
+2. **Use readable formatting** - Format with actual newlines for clarity
+3. **Include relevant rules** - Only add CLAUDE.md rules that apply to the task
+4. **Be specific** - No placeholders or generic content
+5. **Make it actionable** - The user should understand exactly what will be done
 
 ## Implementation Process
 
@@ -236,111 +243,6 @@ THE PLAN MUST BE A PROPERLY FORMATTED SINGLE-LINE STRING WITH ESCAPED CHARACTERS
 2. Analyze your request to determine the context
 3. Select only the relevant rules for your task
 4. Generate an enhanced prompt with contextual project rules
-5. If in plan mode, present it via exit_plan_mode
+5. If in plan mode, present it via exit_plan_mode with proper formatting
 
-## COMPLETE EXAMPLES FOR PLAN MODE
-
-### Example 1: Simple Enhancement Request
-
-If the user types: `/enhance add logging to the system`
-
-```
-exit_plan_mode(plan="<enhanced_prompt>\n<context>\nThe user wants to add logging functionality to the system for better debugging and monitoring capabilities.\n</context>\n<objective>\nImplement comprehensive logging throughout the system\n</objective>\n<requirements>\n- Add structured logging with appropriate log levels\n- Include timestamps and context information\n- Ensure sensitive data is not logged\n</requirements>\n</enhanced_prompt>")
-```
-
-### Example 2: Complex Enhancement with Quotes and Rules
-
-If the user types: `/enhance fix the authentication bug`
-
-```
-exit_plan_mode(plan="<enhanced_prompt>\n<context>\nThe user is experiencing an authentication bug that needs to be fixed. This involves debugging the authentication system, identifying the root cause, and implementing a fix while ensuring no regressions.\n</context>\n<project_rules>\n<applicable_rules context=\"code-quality, testing\">\n- NEVER claim success if tests are failing\n- ALWAYS verify functionality before declaring completion\n- Update existing code instead of creating new versions\n</applicable_rules>\n</project_rules>\n<objective>\nDebug and fix the authentication bug in the system, ensuring proper functionality is restored\n</objective>\n<requirements>\n- Investigate the authentication flow to identify where it's failing\n- Check error logs and debug output for clues\n- Review recent changes that might have introduced the bug\n- Implement a fix that addresses the root cause\n- Ensure the fix doesn't break existing functionality\n</requirements>\n<constraints>\n- Maintain backward compatibility with existing auth tokens\n- Don't modify the authentication API interface\n- Preserve existing user sessions during the fix\n</constraints>\n<deliverables>\n- Fixed authentication code with the bug resolved\n- Updated tests that verify the fix\n- Brief explanation of what caused the bug\n</deliverables>\n<success_criteria>\n- All authentication tests pass\n- Users can successfully log in and maintain sessions\n- No regression in existing authentication features\n</success_criteria>\n</enhanced_prompt>")
-```
-
-### Example 3: Enhancement with Special Characters
-
-If the user types: `/enhance create a "config" parser that handles JSON & XML`
-
-```
-exit_plan_mode(plan="<enhanced_prompt>\n<context>\nThe user needs a configuration parser that can handle both JSON and XML formats. The parser should be flexible and handle special characters properly.\n</context>\n<objective>\nCreate a robust configuration parser supporting both JSON and XML formats with proper handling of special characters like \"quotes\", &amp; ampersands, and other symbols\n</objective>\n<requirements>\n- Support parsing JSON files with nested objects\n- Support parsing XML files with attributes and namespaces\n- Handle special characters: quotes (\"), ampersands (&amp;), less than (&lt;), greater than (&gt;)\n- Provide unified interface for both formats\n- Include error handling for malformed files\n</requirements>\n</enhanced_prompt>")
-```
-
-### Example 4: Enhancement with Code Snippets
-
-If the user types: `/enhance add a function to validate email addresses`
-
-```
-exit_plan_mode(plan="<enhanced_prompt>\n<context>\nThe user needs an email validation function to ensure proper email format before processing.\n</context>\n<objective>\nCreate a robust email validation function with comprehensive format checking\n</objective>\n<requirements>\n- Support standard email formats like user@domain.com\n- Handle special cases: plus addressing (user+tag@domain.com)\n- Validate against RFC 5322 specification\n- Return clear error messages for invalid formats\n- Include unit tests with examples like: \"test@example.com\", \"user+tag@domain.co.uk\"\n</requirements>\n<deliverables>\n- Email validation function with regex pattern\n- Unit tests covering edge cases\n- Documentation with usage examples\n</deliverables>\n</enhanced_prompt>")
-```
-
-### Example 5: Empty Arguments (Conversation History)
-
-If the user types just: `/enhance`
-
-```
-exit_plan_mode(plan="<enhanced_prompt>\n<context>\nBased on the conversation history, the user was discussing [previous topic]. This enhancement will address that request.\n</context>\n<objective>\n[Objective based on previous conversation]\n</objective>\n<requirements>\n- [Requirements derived from context]\n</requirements>\n</enhanced_prompt>")
-```
-
-### Key Points for ALL Examples:
-
-1. **ENTIRE call on ONE line** - No line breaks in the string
-2. **ALL newlines as \n** - Never use actual line breaks
-3. **ALL quotes escaped as \"** - Including quotes in requirements
-4. **Special XML characters** - Use &amp; for &, &lt; for <, &gt; for >
-5. **Real content** - No placeholders or templates
-6. **Backslashes** - If you need a backslash, use \\\\ (double escape)
-7. **Long strings** - Even very long enhanced prompts must be on ONE line
-
-## Troubleshooting Empty Plans
-
-### Problem: Plan appears empty or shows "{}"
-
-**Cause**: Multi-line strings or unescaped characters
-**Solution**: Ensure the entire exit_plan_mode call is on ONE line with proper escaping
-
-### Problem: XML tags are not showing
-
-**Cause**: XML tags being interpreted as HTML
-**Solution**: Make sure you're passing them as plain text in the string
-
-### Problem: Quotes causing syntax errors
-
-**Cause**: Unescaped quotes breaking the string
-**Solution**: Replace ALL " with \" in your content
-
-### Problem: Content appears cut off
-
-**Cause**: Newlines breaking the string
-**Solution**: Replace ALL newlines with \n
-
-### Quick Debug Checklist
-
-1. Copy your exit_plan_mode call to a text editor
-2. Verify it's all on ONE line
-3. Search for unescaped quotes (")
-4. Search for actual newlines
-5. Check for special characters that need escaping
-
-### If Still Having Issues
-
-- Start with a simple example and gradually add complexity
-- Test with minimal content first
-- Add sections one at a time to identify which part causes issues
-- Remember: The plan parameter expects a single-line string with escaped characters
-
-## Common Mistakes to Avoid
-
-1. **Using actual newlines in the string** - This is the #1 cause of empty plans
-2. **Forgetting to escape quotes in CLAUDE.md rules** - Rules often contain quotes
-3. **Using template literals or multi-line strings** - Always use regular strings
-4. **Passing the template instead of generated content** - Fill in ALL sections
-5. **Missing backslash escaping** - File paths like C:\\Users need \\\\
-6. **Not escaping XML entities** - Use &amp;, &lt;, &gt; for >, <, >
-7. **Breaking the string across multiple lines for readability** - DON'T! Keep it on one line
-
-## Final Reminder
-
-The exit_plan_mode expects a single-line string. No matter how long your enhanced prompt is, it must be formatted as one continuous line with proper escape sequences. This is not a limitation of the tool - it's how string parameters work in function calls.
-
----
-
-Now I'll analyze your request and generate the properly formatted enhanced prompt for plan mode.
+Now, I'll analyze your request and generate the context-aware enhanced prompt.
