@@ -12,9 +12,10 @@ Transform this request into a comprehensive prompt:
 ## Instructions
 
 1. Check for CLAUDE.md project rules if they exist
-2. Create an enhanced prompt using markdown headers and bullet points
-3. Make it 5-10x more detailed than the original
-4. Include all sections shown below
+2. Extract only rules relevant to the specific task
+3. Create a structured prompt using markdown headers
+4. Be comprehensive but concise - add only necessary detail
+5. Include all sections shown below
 
 ## Enhanced Prompt Format
 
