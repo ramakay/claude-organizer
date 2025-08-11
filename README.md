@@ -45,7 +45,7 @@ Claude Code struggles to maintain project context throughout conversations. You 
 
 **Example**: You ask "fix the broken tests" and Claude doesn't remember your rule: "NEVER claim success if tests are failing"
 
-**Solution**: The `/enhance` command with two-pass prompt enhancement
+**Solution**: The `/enhance` command transforms vague requests into comprehensive, context-aware prompts
 
 #### Before and After
 
@@ -58,32 +58,54 @@ fix the broken tests
 **After** `/enhance` (what Claude receives):
 
 ```
-I need help fixing broken tests in this project.
+Enhanced Prompt: Fix the Broken Tests
 
-Context:
-- Identify which tests are failing and why
-- Review test output and error messages
-- Fix the underlying issues causing test failures
-- Verify all tests pass after fixes
+DETECTED TASK TYPE:
+Primary intent: Debugging
+Relevant contexts: testing, code-quality
 
-Requirements:
-- Run the full test suite first to see current state
-- Fix one test at a time, verifying each fix
-- Ensure no regression in other tests
-- Document any significant changes made
+CONTEXT & MOTIVATION:
+Tests are failing and need immediate attention. Broken tests block deployments
+and reduce confidence in the codebase. Each test failure needs systematic
+investigation to find root causes, not just symptom fixes.
 
-Project-Specific Rules (from CLAUDE.md):
+CONTRARIAN ANALYSIS:
+- Are tests failing due to code bugs or test environment issues?
+- Could recent dependency updates have broken tests?
+- Are the tests themselves flawed rather than the code?
+- Should we fix or remove outdated tests?
+
+PROJECT RULES (from CLAUDE.md):
 - NEVER claim success if tests are failing
 - ALWAYS verify functionality before declaring completion
+- Document changes appropriately
+
+REQUIREMENTS:
+- Run full test suite to see current state
+- Analyze each failure for root cause
+- Fix underlying issues, not just symptoms
+- Verify no regression in other tests
 - Run lint and typecheck after changes
 
-Success Criteria:
-- All tests pass
-- No linting errors
-- Code changes are minimal and focused
+SUCCESS CRITERIA:
+- [ ] All tests pass without warnings
+- [ ] Root causes documented
+- [ ] No regression in existing tests
+- [ ] Lint and typecheck pass
 ```
 
-**💡 Pro Tip**: Use Shift+P (plan mode) with `/enhance` to review the context selection and prompt engineering before execution
+**💡 Pro Tip**: Use Shift+P (plan mode) with `/enhance` to review the enhanced prompt before execution
+
+#### How the /enhance Command Works
+
+1. **Reads CLAUDE.md** - Automatically finds and incorporates your project rules
+2. **Detects Task Type** - Analyzes keywords to understand what you're trying to do
+3. **Adds Contrarian Analysis** - Questions assumptions early to prevent wasted effort
+4. **Maps to MCP Tools** - Recommends appropriate tools like mcp**zen**\* for analysis
+5. **Generates Structured Prompt** - Creates comprehensive requirements with success criteria
+6. **Presents for Review** - Shows the enhanced prompt in plan mode for your approval
+
+The enhance command ensures Claude understands not just what you want, but also your project's specific requirements, potential pitfalls, and success criteria.
 
 ## How Claude Organize Helps
 
