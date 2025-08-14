@@ -1,3 +1,5 @@
+[![MSeeP.ai Security Assessment Badge](https://mseep.net/pr/ramakay-claude-organizer-badge.png)](https://mseep.ai/app/ramakay-claude-organizer)
+
 # Claude Organize
 
 <div align="center">
